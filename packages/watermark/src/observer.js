@@ -3,8 +3,8 @@ export default function observer(targetNode, waterNode, config) {
   const defaultConfig = { attributes: true, childList: true, subtree: true };
   // 变动时执行的回调函数
   const callback = function (mutationsList) {
-    for (let mutation of mutationsList) {
-      for (let node of mutation.removedNodes) {
+    for (const mutation of mutationsList) {
+      for (const node of mutation.removedNodes) {
         if (node === waterNode) {
           targetNode.appendChild(waterNode);
           return;

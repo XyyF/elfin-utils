@@ -28,7 +28,7 @@ export default class Watermark {
     const { clientWidth, clientHeight } = document.documentElement || document.body;
     const column = Math.ceil(clientWidth / waterWidth);
     const rows = Math.ceil(clientHeight / waterHeight);
-  
+
     for (let i = 0; i < column * rows; i++) {
       const wrap = document.createElement('div');
       this.injectStyle(wrap, {
@@ -50,7 +50,7 @@ export default class Watermark {
   }
 
   injectStyle(el, property) {
-    for (let i in property) {
+    for (const i in property) {
       if (property.hasOwnProperty(i)) {
         el.style[i] = property[i];
       }
