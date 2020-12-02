@@ -23,6 +23,9 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
+  "dependencies": {
+    "fonteditor-core": "^2.1.5"
+  },
   "bugs": {
     "url": "https://github.com/XyyF/elfin-utils/issues"
   }

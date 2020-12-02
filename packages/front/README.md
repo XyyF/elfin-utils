@@ -1,11 +1,9 @@
-# `front`
+# elfin-font
 
-> TODO: description
+elfin 字体处理
 
-## Usage
+[在线查看字体文件内容](http://fontstore.baidu.com/static/editor/index.html)
 
-```
-const front = require('front');
+## crop font 裁剪字体
 
-// TODO: DEMONSTRATE API
-```
+场景：字体文件过大，并且发部分字体可能并不会使用到，因此需要裁剪字体文件内容
