@@ -1,6 +1,5 @@
 # elfin-utils
 elfin-utils
 
-## watermark
-
-前端水印实现
+## Refs 
+- [watermark](./packages/watermark/README.md) 前端水印实现方案
