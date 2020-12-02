@@ -1,11 +1,5 @@
-# `watermark`
+# watermark
 
-> TODO: description
+> 前端水印实现
 
-## Usage
-
-```
-const watermark = require('watermark');
-
-// TODO: DEMONSTRATE API
-```
+## div实现水印
