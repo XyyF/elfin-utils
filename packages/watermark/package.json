@@ -1,0 +1,31 @@
+{
+  "name": "watermark",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "rengarxiao <rengarxiao@tencent.com>",
+  "homepage": "https://github.com/XyyF/elfin-utils/tree/master/packages/watermark#readme",
+  "license": "ISC",
+  "main": "lib/watermark.umd.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npm.taobao.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/XyyF/elfin-utils.git"
+  },
+  "scripts": {
+    "build": "npm run build:element",
+    "build:watermark": "rollup index.js --file lib/watermark.umd.js --format umd",
+    "build:element": "rollup --file lib/element.umd.js --format umd --name Watermark -i src/element.js ",
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/XyyF/elfin-utils/issues"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "elfin-utils",
+  "version": "1.0.0",
+  "description": "elfin-utils",
+  "main": "",
+  "scripts": {
+    "build": "lerna run build",
+    "build:element": "rollup --file lib/element.umd.js --format umd --name watermark -i packages/watermark/src/element.js ",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/XyyF/elfin-utils.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/XyyF/elfin-utils/issues"
+  },
+  "homepage": "https://github.com/XyyF/elfin-utils#readme",
+  "devDependencies": {
+    "lerna": "^3.22.1",
+    "rollup": "^2.34.0"
+  }
+}
