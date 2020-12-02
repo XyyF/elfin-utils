@@ -1,13 +1,17 @@
-// const Observer from './observer'
+import observer from './observer';
 
 export default class Watermark {
-  constructor(options) {
+  constructor(options = {}) {
     this.options = options || {text: ''};
-    this.mount();
+    this.options.el = options.el || document.body;
+    if (!(this.options.el instanceof Element)) {
+      throw new Error('错误的el，请确认后重新操作');
+    }
   }
 
   mount() {
     const waterWrapper = document.createElement('div');
+    waterWrapper.id = 'elfin-watermark';
     this.injectStyle(waterWrapper, {
       position: 'fixed',
       top: '0px',
@@ -37,7 +41,12 @@ export default class Watermark {
       wrap.appendChild(this.createItem());
       waterWrapper.appendChild(wrap);
     }
-    document.body.appendChild(waterWrapper);
+
+    this.options.el.appendChild(waterWrapper);
+
+    if (this.options.observer) {
+      observer.call(this, this.options.el, waterWrapper);
+    }
   }
 
   injectStyle(el, property) {

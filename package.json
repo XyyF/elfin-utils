@@ -5,7 +5,6 @@
   "main": "",
   "scripts": {
     "build": "lerna run build",
-    "build:element": "rollup --file lib/element.umd.js --format umd --name watermark -i packages/watermark/src/element.js ",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

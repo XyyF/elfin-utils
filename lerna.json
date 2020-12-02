@@ -1,6 +1,7 @@
 {
+  "npmClient": "npm",
   "packages": [
-    "packages/*"
+    "packages/watermark"
   ],
   "version": "0.0.0"
 }

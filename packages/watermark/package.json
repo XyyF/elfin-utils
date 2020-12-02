@@ -20,8 +20,8 @@
     "url": "git+https://github.com/XyyF/elfin-utils.git"
   },
   "scripts": {
-    "build": "npm run build:element",
-    "build:watermark": "rollup index.js --file lib/watermark.umd.js --format umd",
+    "build": "npm run build:watermark && npm run build:element",
+    "build:watermark": "rollup index.js --file lib/watermark.umd.js --format umd --name Watermark",
     "build:element": "rollup --file lib/element.umd.js --format umd --name Watermark -i src/element.js ",
     "test": "echo \"Error: run tests from root\" && exit 1"
   },

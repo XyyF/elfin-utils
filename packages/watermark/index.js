@@ -1,5 +1,5 @@
-import Watermark from './src/element'
+import Element from './src/element'
 
 export default {
-  Watermark,
+  Element,
 }

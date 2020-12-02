@@ -9,7 +9,7 @@
   </head>
 
   <body>
-    <main role="main">
+    <main class="main">
       <div dir="ltr" class="css-7yf5z7-GridComponent e57qer20">
         <h1 id="content" tabindex="-1" class="css-1wfn6k3-Headline e1yj3cbb0">中国嫦娥五号探测器着陆月球</h1>
       </div>
@@ -244,7 +244,9 @@
     <script>
       new Watermark({
         text: 'rengarxiao',
-      });
+        observer: 'true',
+        el: document.querySelector('.main')
+      }).mount();
     </script>
   </body>
 
