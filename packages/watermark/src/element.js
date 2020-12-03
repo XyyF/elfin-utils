@@ -41,15 +41,15 @@ export default class Watermark {
   _createItem() {
     const item = document.createElement('div');
     item.innerHTML = this.options.text;
-    this.injectStyle(item, {
+    this._injectStyle(item, {
       position: 'absolute',
-      top: `50px`,
-      left: `50px`,
-      fontSize: `16px`,
-      color: '#000',
+      top: '50px',
+      left: '50px',
+      fontSize: '16px',
+      color: 'rgb(201, 201, 201)',
       lineHeight: 1.5,
-      opacity: 0.1,
-      transform: `rotate(-15deg)`,
+      opacity: 0.5,
+      transform: `rotate(-35deg)`,
       transformOrigin: '0 0',
       userSelect: 'none',
       whiteSpace: 'nowrap',
@@ -75,8 +75,8 @@ export default class Watermark {
       'flex-wrap': 'wrap',
       'pointer-events': 'none',
     });
-    const waterHeight = 100;
-    const waterWidth = 180;
+    const waterHeight = 166;
+    const waterWidth = 340;
     const { clientWidth, clientHeight } = this.options.el;
     const column = Math.ceil(clientWidth / waterWidth);
     const rows = Math.ceil(clientHeight / waterHeight);

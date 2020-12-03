@@ -24,7 +24,14 @@ export default function observer(targetNode, waterNode) {
     // 创建一个观察器实例并传入回调函数
     waterObserver = new MutationObserver((mutationsList) => {
       for (const mutation of mutationsList) {
+        // 水印图层css样式被修改
         if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+          this.unmount();
+          this.mount();
+          return;
+        }
+        // 子节点被删除
+        if (mutation.type === 'childList' && mutation.removedNodes.length > 0) {
           this.unmount();
           this.mount();
           return;

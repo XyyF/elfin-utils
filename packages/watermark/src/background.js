@@ -10,12 +10,41 @@ export default class Watermark {
     if (!(this.options.img)) {
       throw new Error('错误的img，请确认后重新操作');
     }
+    this.observers = null;
   }
 
   mount() {
-    const watermark = document.createElement('div');
-    watermark.id = 'elfin-watermark';
-    this.injectStyle(watermark, {
+    const waterWrapper = this._createWrap();
+    this.options.el.style.position = 'relative';
+    this.options.el.prepend(waterWrapper);
+
+    if (this.options.observer) {
+      this.observers = observer.call(this, this.options.el, waterWrapper);
+    }
+  }
+
+  unmount() {
+    // 取消监听
+    if (this.options.observer) {
+      this.observers.disconnect();
+      this.observers = null;
+    }
+    const waterWrapper = document.querySelector('#elfin-watermark');
+    this.options.el.removeChild(waterWrapper);
+  }
+
+  _injectStyle(el, property) {
+    for (const i in property) {
+      if (property.hasOwnProperty(i)) {
+        el.style[i] = property[i];
+      }
+    }
+  }
+
+  _createWrap() {
+    const waterWrapper = document.createElement('div');
+    waterWrapper.id = 'elfin-watermark';
+    this._injectStyle(waterWrapper, {
       width: '100%',
       height: '100%',
       'min-height': '28px',
@@ -29,19 +58,6 @@ export default class Watermark {
       'background-image': `url("${this.options.img}")`,
     });
 
-    this.options.el.style.position = 'relative';
-    this.options.el.prepend(watermark);
-
-    if (this.options.observer) {
-      observer.call(this, this.options.el, watermark);
-    }
-  }
-
-  injectStyle(el, property) {
-    for (const i in property) {
-      if (property.hasOwnProperty(i)) {
-        el.style[i] = property[i];
-      }
-    }
+    return waterWrapper;
   }
 }
