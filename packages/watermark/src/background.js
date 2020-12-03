@@ -2,7 +2,7 @@ import observer from './observer';
 
 export default class Watermark {
   constructor(options = {}) {
-    this.options = options || { text: '' };
+    this.options = options || {};
     this.options.el = options.el || document.body;
     if (!(this.options.el instanceof Element)) {
       throw new Error('错误的el，请确认后重新操作');
@@ -22,7 +22,7 @@ export default class Watermark {
       position: 'absolute',
       top: 0,
       left: 0,
-      'z-index': 3,
+      'z-index': 1,
       opacity: 0.1,
       'pointer-events': 'none',
       'background-repeat': 'repeat',
@@ -30,7 +30,7 @@ export default class Watermark {
     });
 
     this.options.el.style.position = 'relative';
-    this.options.el.appendChild(watermark);
+    this.options.el.prepend(watermark);
 
     if (this.options.observer) {
       observer.call(this, this.options.el, watermark);

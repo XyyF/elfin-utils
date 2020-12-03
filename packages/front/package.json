@@ -21,6 +21,7 @@
     "url": "git+https://github.com/XyyF/elfin-utils.git"
   },
   "scripts": {
+    "build": "",
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {

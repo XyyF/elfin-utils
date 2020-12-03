@@ -5,6 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>element-watermark</title>
+    <style>
+      .main {
+        margin: 0 200px;
+      }
+    </style>
 
   </head>
 
@@ -243,7 +248,6 @@
     <script src="../lib/background.umd.js"></script>
     <script>
       new Watermark({
-        text: 'rengarxiao',
         observer: 'true',
         el: document.querySelector('.main'),
         img: './background.png',
