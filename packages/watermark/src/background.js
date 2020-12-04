@@ -1,6 +1,12 @@
 import observer from './observer';
 
 export default class Watermark {
+  /**
+   * @param {Object} options
+   * @param {string?} options.img 水印图片路径
+   * @param {Element?} options.el 水印挂载元素
+   * @param {string?} options.observer 是否监听文本变动
+   */
   constructor(options = {}) {
     this.options = options || {};
     this.options.el = options.el || document.body;

@@ -1,6 +1,13 @@
 import observer from './observer';
 
 export default class Watermark {
+  /**
+   * @param {Object} options
+   * @param {string} options.text 水印文本
+   * @param {Element?} options.el 水印挂载元素
+   * @param {string?} options.observer 是否监听文本变动
+   * @param {string?} options.resize 是否监听浏览器窗口变动
+   */
   constructor(options = {}) {
     this.options = options || { text: '' };
     this.options.el = options.el || document.body;
@@ -17,6 +24,12 @@ export default class Watermark {
     // 监听DOM变动
     if (this.options.observer) {
       this.observers = observer.call(this, this.options.el, waterWrapper);
+    }
+    if (this.options.resize) {
+      window.onresize = () => {
+        this.unmount();
+        this.mount();
+      }
     }
   }
 
