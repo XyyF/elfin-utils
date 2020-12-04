@@ -2,7 +2,7 @@ import observer from './observer';
 
 export default class Watermark {
   constructor(options = {}) {
-    this.options = options || {text: ''};
+    this.options = options || { text: '' };
     this.options.el = options.el || document.body;
     if (!(this.options.el instanceof Element)) {
       throw new Error('错误的el，请确认后重新操作');
@@ -40,11 +40,11 @@ export default class Watermark {
 
   _createItem() {
     const item = document.createElement('div');
-    item.innerHTML = this.options.text;
+    item.appendChild(document.createTextNode(this.options.text));
     this._injectStyle(item, {
       position: 'absolute',
-      top: '50px',
-      left: '50px',
+      top: '0',
+      left: '0',
       fontSize: '16px',
       color: 'rgb(201, 201, 201)',
       lineHeight: 1.5,
@@ -53,7 +53,7 @@ export default class Watermark {
       transformOrigin: '0 0',
       userSelect: 'none',
       whiteSpace: 'nowrap',
-      overflow: 'hidden',
+      // overflow: 'hidden',
     });
     return item;
   }
@@ -65,33 +65,42 @@ export default class Watermark {
       width: '100%',
       height: '100%',
       'min-height': '28px',
-      position: 'absolute',
-      top: '0px',
-      right: '0px ',
-      bottom: '0px',
-      left: '0px',
-      overflow: 'hidden',
-      display: 'flex',
-      'flex-wrap': 'wrap',
+      position: 'relative',
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
       'pointer-events': 'none',
     });
+
     const waterHeight = 166;
     const waterWidth = 340;
-    const { clientWidth, clientHeight } = this.options.el;
-    const column = Math.ceil(clientWidth / waterWidth);
-    const rows = Math.ceil(clientHeight / waterHeight);
+    const heightSpace = 150;
+    const widthSpace = 180;
+    const heightPadding = 60;
+    const widthPadding = 60;
+    const { scrollWidth, scrollHeight } = this.options.el;
+    let maxWidth = scrollWidth, maxHeight = scrollHeight;
+    if (parseInt(this.options.el.style.width) && this.options.el.style.width.indexOf('%') == -1) {
+			maxWidth = parseInt(wmTarget.style.width) - 20,
+      maxHeight = parseInt(wmTarget.style.height) - 20;
+		}
+    const columns = Math.ceil((maxWidth - widthPadding) / (waterWidth + widthSpace));
+    const rows = Math.ceil((maxHeight - heightPadding) / (waterHeight + heightSpace));
 
-    for (let i = 0; i < column * rows; i++) {
-      const wrap = document.createElement('div');
-      this._injectStyle(wrap, {
-        position: 'relative',
-        width: `${waterWidth}px`,
-        height: `${waterHeight}px`,
-        flex: `0 0 ${waterWidth}px`,
-        overflow: 'hidden',
-      });
-      wrap.appendChild(this._createItem());
-      waterWrapper.appendChild(wrap);
+    let x, y;
+    const itemNode = this._createItem();
+    for (let i = 0; i < rows; i++) {
+      y = widthPadding + (waterHeight + heightSpace) * i;
+      for (let j = 0; j < columns; j++) {
+        x = heightPadding + (waterWidth + widthSpace) * j;
+        if (i > 0 || j > 0) {
+          const node = itemNode.cloneNode(true);
+          node.style.left = `${x}px`;
+          node.style.top = `${y}px`;
+          waterWrapper.appendChild(node);
+        }
+      }
     }
     return waterWrapper;
   }
