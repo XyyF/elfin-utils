@@ -29,7 +29,7 @@ export default class Watermark {
       window.onresize = () => {
         this.unmount();
         this.mount();
-      }
+      };
     }
   }
 
