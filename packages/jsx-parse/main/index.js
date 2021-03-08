@@ -22,7 +22,7 @@ class Lexer {
   }
 
   lex() {
-    let tokens = [];
+    let tokens = [], text = '';
     // while (this.string && this.string.length > 0) {
       const word = this.addvance();
       switch(word) {
@@ -30,11 +30,13 @@ class Lexer {
           tokens.push(this.bindStartTag());
           break;
         case ' ':
+          text += word;
           break;
         case '\n':
           break;
         default:
-          // ...
+          text += word;
+          // tokens.push(this.bindTextTag(text));
       }
     // }
 
@@ -71,5 +73,14 @@ class Lexer {
     this.string = this.string.slice(index + 1);
 
     return ['startTag', tag, props];
+  }
+
+  /**
+   * 解析文本内容
+   */
+  bindTextTag(text) {
+    this.pos += text.length;
+    this.string = this.string.slice(text + 1);
+    return ['textTag', text, []];
   }
 };

@@ -12,7 +12,7 @@ const JsxParser = require('../main/index');
 //     <Counter me="excellent">I am awesome</Counter>
 //   </div>
 // </div>`
-const str = `<div></div>`
+const str = `123<div></div>`
 
 const jsx = new JsxParser();
 console.log(222, jsx.parse(str))
