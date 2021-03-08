@@ -1,6 +1,36 @@
-let Lexer = require('./parse');
+{/* <div name="{{jsx-parse}}" class="{{fuck}}" id="1">
+  Life is too difficult
+  <span name="life" like="rape">
+    <p>Life is like rape</p>
+  </span>
+  <div>
+    <span name="live" do="{{gofuck}}">
+      <p>Looking away, everything is sad </p>
+    </span>
+    <Counter me="excellent">I am awesome</Counter>
+  </div>
+</div>; */}
+``
+// new JsxParser();
+// parse()
 
-class Jsx {
+let token = {
+  startTag: 'startTag', // < 起始标签
+  endTag: 'endTag', // /> 结束标签
+  text: 'text', // 文本
+  eof: 'eof', // 错误捕获
+};
+
+/**
+ * 元素节点
+ * @param{string} type 节点类型
+ * @param{object} props 的节点属性
+ * @param{array?} props.childrens 子节点
+ * @param{string?} props.text 文本内容
+ * @param{string?} props.class css类
+ * ...
+ */
+class ElementNode {
   constructor(type, props) {
     this.type = type;
     this.props = props;
@@ -30,6 +60,7 @@ class JsxParser {
 
   parse() {
     this.currentToken = this.lexer.lex();
+    console.log('currentToken', this.currentToken)
     let type = this.currentToken[0];
     let tag = this.currentToken[1];
     let props = this.mergeObj(this.currentToken[2]);
@@ -58,13 +89,13 @@ class JsxParser {
           jsx = jsx.props['childrens'];
         }
       }
-      this.currentJsx = new Jsx(tag, {
+      this.currentJsx = new ElementNode(tag, {
         childrens: [],
       });
       Object.assign(this.currentJsx['props'], props);
       jsx.push(this.currentJsx);
     } else {
-      this.currentJsx = jsx = new Jsx(tag, {
+      this.currentJsx = jsx = new ElementNode(tag, {
         childrens: [],
       });
       Object.assign(jsx['props'], props);
@@ -104,8 +135,11 @@ class JsxParser {
   }
 }
 
-module.exports = JsxParser;
+// module.exports = JsxParser;
 
+/**
+ * 词法分析器，将字符串进行词法分割
+ */
 class Lexer {
   constructor(string) {
     this.token = token;
@@ -113,6 +147,7 @@ class Lexer {
     this.pos = 0;
   }
 
+  // 获取下一个字符
   advance() {
     let str = this.string[this.pos];
     this.pos++;
@@ -173,6 +208,7 @@ class Lexer {
     if (idx == -1) {
       throw new Error('parse err! miss match ' > '');
     }
+    // 获取 < ... >
     let str = this.string.slice(this.pos, idx);
     let s = '';
     if (str.includes(' ')) {
