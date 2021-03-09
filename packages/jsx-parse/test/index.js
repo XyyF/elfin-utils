@@ -12,7 +12,7 @@ const JsxParser = require('../main/index');
 //     <Counter me="excellent">I am awesome</Counter>
 //   </div>
 // </div>`
-const str = `123<div></div>`
+// const str = `123<div test={a > 1 ? '123' : '321'} test2={...{a: 1}}>123<br/></div>`
+const str = `<div test="1" test2="312"></div>`
 
-const jsx = new JsxParser();
-console.log(222, jsx.parse(str))
+console.log(222, JsxParser(str, true))

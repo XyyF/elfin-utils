@@ -1,18 +1,12 @@
+const TagConst = {
+  Comment: '#comment',
+};
 
 /**
  * jsx解析器
  */
-module.exports = class JsxParser {
-  constructor() {
-  }
-
-  /**
-   * 解析jsx字符串
-   * @{string} string jsx字符串
-   */
-  parse(string) {
-    return new Lexer(string).lex();
-  }
+module.exports = function JsxParser(string) {
+  return new Lexer(string).lex();
 };
 
 class Lexer {
@@ -22,22 +16,16 @@ class Lexer {
   }
 
   lex() {
-    let tokens = [], text = '';
+    let tokens = [];
     // while (this.string && this.string.length > 0) {
-      const word = this.addvance();
-      switch(word) {
-        case '<':
-          tokens.push(this.bindStartTag());
-          break;
-        case ' ':
-          text += word;
-          break;
-        case '\n':
-          break;
-        default:
-          text += word;
-          // tokens.push(this.bindTextTag(text));
-      }
+    // 处理结束标签 </
+
+    // 处理注释标签 <!--
+
+    // 处理起始标签 <
+    if (this.string.indexOf('<') === 0) {
+      tokens.push(this.bindStartTag());
+    }
     // }
 
     return tokens;
@@ -51,28 +39,84 @@ class Lexer {
   }
 
   /**
-   * 解析元素开始字符 <
+   * 处理元素节点 <
    */
   bindStartTag() {
-    const index = this.string.indexOf('>');
-    if (index === -1) {
-      throw new Error('Lexer parse error: >');
+    // 解析tagName: <div props...> | <div></div> | <div/>
+    const match = this.string.match(/^\<(\w[^\s\/\>]*)/);
+    if (match) {
+      const tagName = match[1];
+      const node = {
+        type: tagName,
+        props: {},
+        children: [],
+      };
+
+      this.string = this.string.replace(match[0], '');
+      const [str, props] = this.bindTagAttr();
+      node.props = props;
+      this.string = str;
+
+      return node;
     }
-    const str = this.string.slice(this.pos, index);
-    // 分割属性值
-    const words = str.split(' ').filter((e) => {
-      return e != '';
-    });
-    // 元素节点tag
-    const tag = words[0];
-    // 解析props
-    const props = {};
+  }
 
-    // 重置字符起点
-    this.pos += str.length;
-    this.string = this.string.slice(index + 1);
-
-    return ['startTag', tag, props];
+  /**
+   * 解析元素节点的attr值，当匹配 / 或 > 结束
+   * <div attr="xxx"></div> | <div attr={xxx}/>
+   *
+   * 词法：
+   * attrName attr属性名
+   * attrValue attr属性值
+   * equal =符号（前置：attrName必须有值）
+   * quote "|'符号（前置：attrName必须有值）
+   * jsx {符号（前置：attrName必须有值）
+   */
+  bindTagAttr() {
+    let state = 'attrName',
+      attrName = '',
+      attrValue = '',
+      props = {};
+    for (let i = 0, l = this.string.length; i < l; i++) {
+      const word = this.string[i];
+      switch (state) {
+        case 'attrName':
+          if (word === '/' || word === '>') {
+            return [this.string.slice(0, i + 1), props];
+          }
+          if (word === ' ') {
+            break;
+          } else if (word === '=') {
+            if (!attrName) {
+              throw new Error('需要指定attrName');
+            }
+            state = 'equal';
+          } else {
+            attrName += word;
+          }
+          break;
+        case 'equal':
+          if (word === '"' || word === "'") {
+            state = 'quote';
+          } else if (word === '{') {
+            state = 'jsx';
+          }
+          break;
+        case 'quote':
+          if (word === '"' || word === "'") {
+            props[attrName] = attrValue;
+            attrValue = attrName = '';
+            state = 'attrName';
+          } else {
+            attrValue += word;
+          }
+          break;
+        case 'jsx':
+          // TODO 处理jsx数据
+          break;
+      }
+    }
+    throw new Error('需要闭合标签');
   }
 
   /**
@@ -83,4 +127,4 @@ class Lexer {
     this.string = this.string.slice(text + 1);
     return ['textTag', text, []];
   }
-};
+}
