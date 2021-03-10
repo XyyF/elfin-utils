@@ -2,6 +2,9 @@ const TagConst = {
   Comment: '#comment',
 };
 
+// 匹配空格、换行符
+const invalidRegexp = /\s/;
+
 /**
  * jsx解析器
  */
@@ -71,11 +74,14 @@ class Lexer {
    * equal =符号（前置：attrName必须有值）
    * quote "|'符号（前置：attrName必须有值）
    * jsx {符号（前置：attrName必须有值）
+   * inlineJsx {...a} 内联jsx属性
    */
   bindTagAttr() {
     let state = 'attrName',
       attrName = '',
       attrValue = '',
+      // 匹配jsx时，闭合标签需要完全匹配
+      closureIndex = 0,
       props = {};
     for (let i = 0, l = this.string.length; i < l; i++) {
       const word = this.string[i];
@@ -84,7 +90,7 @@ class Lexer {
           if (word === '/' || word === '>') {
             return [this.string.slice(0, i + 1), props];
           }
-          if (word === ' ') {
+          if (invalidRegexp.test(word)) {
             break;
           } else if (word === '=') {
             if (!attrName) {
@@ -99,6 +105,7 @@ class Lexer {
           if (word === '"' || word === "'") {
             state = 'quote';
           } else if (word === '{') {
+            closureIndex++;
             state = 'jsx';
           }
           break;
@@ -112,7 +119,26 @@ class Lexer {
           }
           break;
         case 'jsx':
-          // TODO 处理jsx数据
+          // * 解析jsx内容，string不包含第一个{
+          // * {a}
+          // * {{a: "1"}}
+          // * {...a}
+          // * {{a: b > 1 ? '1' : '2'}}
+          // * {() => this.bindxxx()}
+          // * {() => {xxx}}
+          if (word === '{') {
+            closureIndex++;
+          }
+          if (word === '}') {
+            closureIndex--;
+            if (closureIndex === 0) {
+              props[attrName] = { type: '#jsx', nodeValue: attrValue };
+              attrValue = attrName = '';
+              state = 'attrName';
+              break;
+            }
+          }
+          attrValue += word;
           break;
       }
     }
