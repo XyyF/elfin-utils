@@ -22,12 +22,21 @@ class Lexer {
     let tokens = [];
     // while (this.string && this.string.length > 0) {
     // 处理结束标签 </
+    if (this.string.indexOf('</') === 0) {
+      const token = this.bindEndTag();
+      if (token) {
+        tokens.push(token);
+      }
+    }
 
     // 处理注释标签 <!--
 
     // 处理起始标签 <
     if (this.string.indexOf('<') === 0) {
-      tokens.push(this.bindStartTag());
+      const token = this.bindStartTag();
+      if (token) {
+        tokens.push(token);
+      }
     }
     // }
 
@@ -62,6 +71,7 @@ class Lexer {
 
       return node;
     }
+    return null;
   }
 
   /**
@@ -144,6 +154,11 @@ class Lexer {
     }
     throw new Error('需要闭合标签');
   }
+
+  /**
+   * 处理结束节点 </
+   */
+  bindEndTag() {}
 
   /**
    * 解析文本内容
