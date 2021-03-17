@@ -1,4 +1,5 @@
 const JsxParser = require('../main/index');
+// const JsxParser = require('./reference');
 
 // const str = `<div name="{{jsx-parse}}" class="{{fuck}}" id="1">
 //   Life is too difficult
@@ -14,6 +15,7 @@ const JsxParser = require('../main/index');
 // </div>`
 // const str = `123<div test={a > 1 ? '123' : '321'} test2={...{a: 1}}>123<br/></div>`
 const str = `<div
+  {...props}
  test="1"
  test2="312"
  test3={{a: b < 1 ? '1' : '2'}}

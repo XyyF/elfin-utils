@@ -107,6 +107,10 @@ class Lexer {
               throw new Error('需要指定attrName');
             }
             state = 'equal';
+          } else if (word === '{') {
+            i += 3;
+            closureIndex++;
+            state = 'inlineJsx';
           } else {
             attrName += word;
           }
@@ -128,21 +132,28 @@ class Lexer {
             attrValue += word;
           }
           break;
+        case 'inlineJsx':
+          // * 解析jsx内容，string不包含第一个{
+          // * {...a}
         case 'jsx':
           // * 解析jsx内容，string不包含第一个{
           // * {a}
           // * {{a: "1"}}
-          // * {...a}
           // * {{a: b > 1 ? '1' : '2'}}
           // * {() => this.bindxxx()}
           // * {() => {xxx}}
+          // TODO 更加详尽的解析
           if (word === '{') {
             closureIndex++;
           }
           if (word === '}') {
             closureIndex--;
             if (closureIndex === 0) {
-              props[attrName] = { type: '#jsx', nodeValue: attrValue };
+              if (state === 'inlineJsx') {
+                props.inlineJsx = { type: '#jsx', nodeValue: attrValue };
+              } else {
+                props[attrName] = { type: '#jsx', nodeValue: attrValue };
+              }
               attrValue = attrName = '';
               state = 'attrName';
               break;
