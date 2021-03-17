@@ -20,25 +20,32 @@ class Lexer {
 
   lex() {
     let tokens = [];
-    // while (this.string && this.string.length > 0) {
-    // 处理结束标签 </
-    if (this.string.indexOf('</') === 0) {
-      const token = this.bindEndTag();
+    while (this.string && this.string.length > 0) {
+      // 处理结束标签 </
+      if (this.string.indexOf('</') === 0) {
+        const token = this.matchEndTag();
+        if (token) {
+          if (this.string.length === 0) return tokens;
+          continue;
+        }
+      }
+
+      // 处理注释标签 <!--
+
+      // 处理起始标签 <
+      if (this.string.indexOf('<') === 0) {
+        const token = this.matchStartTag();
+        if (token) {
+          tokens.push(token);
+        }
+      }
+
+      // 处理文本标签
+      const token = this.matchText();
       if (token) {
         tokens.push(token);
       }
     }
-
-    // 处理注释标签 <!--
-
-    // 处理起始标签 <
-    if (this.string.indexOf('<') === 0) {
-      const token = this.bindStartTag();
-      if (token) {
-        tokens.push(token);
-      }
-    }
-    // }
 
     return tokens;
   }
@@ -53,9 +60,9 @@ class Lexer {
   /**
    * 处理元素节点 <
    */
-  bindStartTag() {
+  matchStartTag() {
     // 解析tagName: <div props...> | <div></div> | <div/>
-    const match = this.string.match(/^\<(\w[^\s\/\>]*)/);
+    const match = this.string.match(/\<(\w[^\s\/\>]*)/);
     if (match) {
       const tagName = match[1];
       const node = {
@@ -65,7 +72,7 @@ class Lexer {
       };
 
       this.string = this.string.replace(match[0], '');
-      const [str, props] = this.bindTagAttr();
+      const [str, props] = this.parseTagAttr();
       node.props = props;
       this.string = str;
 
@@ -86,7 +93,7 @@ class Lexer {
    * jsx {符号（前置：attrName必须有值）
    * inlineJsx {...a} 内联jsx属性
    */
-  bindTagAttr() {
+  parseTagAttr() {
     let state = 'attrName',
       attrName = '',
       attrValue = '',
@@ -98,7 +105,7 @@ class Lexer {
       switch (state) {
         case 'attrName':
           if (word === '/' || word === '>') {
-            return [this.string.slice(0, i + 1), props];
+            return [this.string.slice(i + 1), props];
           }
           if (invalidRegexp.test(word)) {
             break;
@@ -133,8 +140,8 @@ class Lexer {
           }
           break;
         case 'inlineJsx':
-          // * 解析jsx内容，string不包含第一个{
-          // * {...a}
+        // * 解析jsx内容，string不包含第一个{
+        // * {...a}
         case 'jsx':
           // * 解析jsx内容，string不包含第一个{
           // * {a}
@@ -169,14 +176,33 @@ class Lexer {
   /**
    * 处理结束节点 </
    */
-  bindEndTag() {}
+  matchEndTag() {
+    const match = this.string.match(/\<\/(\w+)\>/);
+    if (match) {
+      const tagName = match[1];
+      const node = {
+        type: tagName,
+        props: {},
+        children: [],
+      };
+
+      this.string = this.string.replace(match[0], '');
+
+      return node;
+    }
+    return null;
+  }
 
   /**
    * 解析文本内容
    */
-  bindTextTag(text) {
-    this.pos += text.length;
-    this.string = this.string.slice(text + 1);
-    return ['textTag', text, []];
+  matchText() {
+    const index = this.string.indexOf('<');
+    const nodeValue = this.string.slice(0, index);
+    this.string = this.string.slice(index);
+    return {
+      type: '#text',
+      nodeValue,
+    };
   }
 }
