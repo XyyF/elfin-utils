@@ -25,6 +25,6 @@ const str = `<div
  test7={() => {xxx}}
  test8={() => this.bindxxx()}
  >123
- </div>`
+ </div><div></div>`
 
-console.dir(JsxParser(str, true))
+console.dir(JsxParser(str, false)[1])

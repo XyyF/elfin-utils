@@ -19,12 +19,13 @@ class Lexer {
   }
 
   lex() {
-    let tokens = [];
+    let tokens = [], isChildrenTag = false;
     while (this.string && this.string.length > 0) {
       // 处理结束标签 </
       if (this.string.indexOf('</') === 0) {
         const token = this.matchEndTag();
         if (token) {
+          isChildrenTag = false;
           if (this.string.length === 0) return tokens;
           continue;
         }
@@ -36,6 +37,7 @@ class Lexer {
       if (this.string.indexOf('<') === 0) {
         const token = this.matchStartTag();
         if (token) {
+          isChildrenTag = true;
           tokens.push(token);
         }
       }
@@ -43,7 +45,18 @@ class Lexer {
       // 处理文本标签
       const token = this.matchText();
       if (token) {
-        tokens.push(token);
+        if (isChildrenTag) {
+          pushChildrenNode(token)
+        } else {
+          tokens.push(token);
+        }
+      }
+    }
+
+    function pushChildrenNode(token) {
+      const lastToken = tokens[tokens.length - 1];
+      if (lastToken) {
+        lastToken.children.push(token);
       }
     }
 
