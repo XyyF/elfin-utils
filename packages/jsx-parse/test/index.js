@@ -27,4 +27,4 @@ const str = `<div
  >123
  </div><div></div>`
 
-console.dir(JsxParser(str, false)[1])
+console.log(JsxParser(str, false))

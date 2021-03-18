@@ -19,14 +19,25 @@ class Lexer {
   }
 
   lex() {
-    let tokens = [], isChildrenTag = false;
+    const vdom = {
+      children: [],
+    }
+    let stack = [vdom];
+
+    function pushChildrenNode(token) {
+      const lastDom = stack[stack.length - 1];
+      if (lastDom) {
+        lastDom.children.push(token);
+      }
+    }
+
     while (this.string && this.string.length > 0) {
       // 处理结束标签 </
       if (this.string.indexOf('</') === 0) {
         const token = this.matchEndTag();
         if (token) {
-          isChildrenTag = false;
-          if (this.string.length === 0) return tokens;
+          if (this.string.length === 0) return vdom.children;
+          stack.pop();
           continue;
         }
       }
@@ -37,30 +48,19 @@ class Lexer {
       if (this.string.indexOf('<') === 0) {
         const token = this.matchStartTag();
         if (token) {
-          isChildrenTag = true;
-          tokens.push(token);
+          pushChildrenNode(token);
+          stack.push(token);
         }
       }
 
       // 处理文本标签
       const token = this.matchText();
       if (token) {
-        if (isChildrenTag) {
-          pushChildrenNode(token)
-        } else {
-          tokens.push(token);
-        }
+        pushChildrenNode(token);
       }
     }
 
-    function pushChildrenNode(token) {
-      const lastToken = tokens[tokens.length - 1];
-      if (lastToken) {
-        lastToken.children.push(token);
-      }
-    }
-
-    return tokens;
+    return vdom.children;
   }
 
   /**
@@ -213,6 +213,7 @@ class Lexer {
     const index = this.string.indexOf('<');
     const nodeValue = this.string.slice(0, index);
     this.string = this.string.slice(index);
+    if (invalidRegexp.test(nodeValue) || nodeValue.length === 0) return null;
     return {
       type: '#text',
       nodeValue,
