@@ -2,7 +2,7 @@
 
 ### 1. 分析目标
 ```js
-`<div {...props} name="{{jsx-parse}}" class="{{fuck}}" id="1">
+`<div {...props} name="{name}" className="div-class" id="1">
   Life is too difficult
 </div>`
 
@@ -12,13 +12,13 @@
   type: 'div',
   props: {
     inlineJsx: {type: '#jsx', nodeValue: 'props'},
-    name: {type: '#jsx', nodeValue: '{jsx-parse}'},
-    class: {type: '#jsx', nodeValue: '{fuck}'},
+    name: {type: '#jsx', nodeValue: 'name'},
+    className: 'div-class',
     id: '1',
     ...
   },
   children: [
-    {...},
+    {type: '#text', nodeValue: 'Life is too difficult'},
   ],
 }]
 
@@ -67,8 +67,8 @@ attr="xxx"> | attr={xxx}> | {...props}>
 TODO
 
 // - 3.10 解析jsx attrs
-- 3.11 解析结束标签
+// - 3.11 解析结束标签
 - 3.12 解析注释标签
-- 3.13 解析children
+// - 3.13 解析children
 - 3.14 解析文本内容
-- 3.15 jest测试方案
+// - 3.15 jest测试方案

@@ -3,7 +3,7 @@ const TagConst = {
 };
 
 // 匹配空格、换行符
-const invalidRegexp = /\s/;
+const invalidRegexp = /^\s*$/;
 
 /**
  * jsx解析器
@@ -15,23 +15,37 @@ module.exports = function JsxParser(string) {
 class Lexer {
   constructor(string) {
     this.string = string;
-    this.pos = 0;
   }
 
   lex() {
+    // 初始化stack栈，在顶层预留虚拟vdom节点，包裹整个真实VDOM
     const vdom = {
       children: [],
     }
     let stack = [vdom];
 
-    function pushChildrenNode(token) {
+    /**
+     * 当遇到起始标签时，将节点入栈
+     * 当遇到结束标签时，出栈节点
+     * tips: 在起始标签 ～ 结束标签之间，解析到的新节点都是children
+     * @param {*} vdom 
+     */
+    function pushChildrenNode(vdom) {
       const lastDom = stack[stack.length - 1];
       if (lastDom) {
-        lastDom.children.push(token);
+        lastDom.children.push(vdom);
       }
     }
 
+    /**
+     * 开始遍历jsx解析
+     * 这里使用while循环，而不是for循环，因为while循环可以让this.string可改变，更加灵活
+     */
     while (this.string && this.string.length > 0) {
+      /**
+       * 有大到小进行解析，如果是 < 字符，那么有可能 </、<!--、<div ...
+       * 所以由大范围匹配往小范围进行解析
+       */
       // 处理结束标签 </
       if (this.string.indexOf('</') === 0) {
         const token = this.matchEndTag();
@@ -61,13 +75,6 @@ class Lexer {
     }
 
     return vdom.children;
-  }
-
-  /**
-   * 获取下一个字符
-   */
-  addvance() {
-    return this.string[this.pos++];
   }
 
   /**
@@ -208,15 +215,27 @@ class Lexer {
 
   /**
    * 解析文本内容
+   * tips: 在jsx中，不推荐直接在元素内容中书写 <、> 等符号，可以放入字符串变量中
    */
   matchText() {
     const index = this.string.indexOf('<');
-    const nodeValue = this.string.slice(0, index);
-    this.string = this.string.slice(index);
-    if (invalidRegexp.test(nodeValue) || nodeValue.length === 0) return null;
-    return {
-      type: '#text',
-      nodeValue,
-    };
+    const sIndex = this.string.indexOf('{');
+    const eIndex = this.string.indexOf('}');
+
+    // 文本内容
+    if (index === -1 || index < sIndex) {
+      const nodeValue = this.string.slice(0, index);
+      this.string = this.string.slice(index);
+      if (nodeValue.length === 0) return null;
+      return {
+        type: '#text',
+        nodeValue,
+      };
+    }
+    // jsx内容
+    if (sIndex === 0) {
+
+    }
+    return null;
   }
 }
