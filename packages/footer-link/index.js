@@ -71,6 +71,7 @@
           width: 100%;
           color: #595958;
           padding: 15px 10px;
+          margin-top: 40px;
           box-sizing: border-box;
           border-top: 1px solid #595958;
         }
