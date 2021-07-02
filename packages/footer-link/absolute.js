@@ -1,5 +1,5 @@
 (function () {
-  window.onload = function () {
+  window.addEventListener('load', function () {
     const footer = createFooter();
 
     footer.appendChild(createList());
@@ -107,5 +107,5 @@
       `;
       document.head.appendChild(style);
     }
-  };
+  });
 })();
