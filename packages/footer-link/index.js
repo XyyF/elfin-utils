@@ -66,7 +66,7 @@
      */
     function addStyle() {
       const style = document.createElement('style');
-      style.innerText = `
+      style.innerHTML = `
         #footer-link {
           width: 100%;
           color: #595958;
