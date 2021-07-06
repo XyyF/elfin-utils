@@ -46,7 +46,7 @@
       const section = document.createElement('section');
 
       const p = document.createElement('p');
-      p.innerText = 'Copyright &#169; 2021 Rengarxiao.';
+      p.innerHTML = 'Copyright &#169; 2021 Rengarxiao.';
       section.appendChild(p);
 
       const a = document.createElement('a');
@@ -71,7 +71,6 @@
           width: 100%;
           color: #595958;
           padding: 15px 10px;
-          margin-top: 40px;
           box-sizing: border-box;
           background: #f2f2f2;
         }
