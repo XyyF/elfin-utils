@@ -73,7 +73,7 @@
           padding: 15px 10px;
           margin-top: 40px;
           box-sizing: border-box;
-          border-top: 1px solid #595958;
+          background: #f2f2f2;
         }
   
         #footer-link .footer-link__list {

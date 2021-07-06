@@ -72,7 +72,7 @@
           color: #595958;
           padding: 15px 10px;
           box-sizing: border-box;
-          border-top: 1px solid #595958;
+          background: #f2f2f2;
           position: absolute;
           left: 0;
           right: 0;
