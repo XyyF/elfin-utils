@@ -1,0 +1,31 @@
+{
+  "name": "footer-link",
+  "version": "1.0.0",
+  "description": "elfin footer link",
+  "author": "rengarxiao <rengarxiao@tencent.com>",
+  "homepage": "https://github.com/XyyF/elfin-utils/tree/master/packages/footer-link#readme",
+  "license": "ISC",
+  "main": "lib/index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npm.taobao.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/XyyF/elfin-utils.git"
+  },
+  "scripts": {
+    "build": "npm run build:index && npm run build:absolute",
+    "build:index": "rollup --file lib/index.js --format iife -i src/index.js --compact",
+    "build:absolute": "rollup --file lib/absolute.js --format iife -i src/absolute.js --compact",
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/XyyF/elfin-utils/issues"
+  }
+}
