@@ -1,6 +1,58 @@
-import observer from './observer';
+(function(g,f){typeof exports==='object'&&typeof module!=='undefined'?module.exports=f():typeof define==='function'&&define.amd?define(f):(g=typeof globalThis!=='undefined'?globalThis:g||self,g.Watermark=f());}(this,(function(){'use strict';function observer(targetNode, waterNode) {
+  let targetObserver, waterObserver;
 
-export default class Watermark {
+  observerTarget.call(this);
+  observerWater.call(this);
+
+  function observerTarget() {
+    // 创建一个观察器实例并传入回调函数
+    targetObserver = new MutationObserver((mutationsList) => {
+      for (const mutation of mutationsList) {
+        for (const node of mutation.removedNodes) {
+          if (node === waterNode) {
+            targetNode.prepend(waterNode);
+            return;
+          }
+        }
+      }
+    });
+    // 以上述配置开始观察目标节点
+    targetObserver.observe(targetNode, { childList: true });
+  }
+
+  function observerWater() {
+    // 创建一个观察器实例并传入回调函数
+    waterObserver = new MutationObserver((mutationsList) => {
+      for (const mutation of mutationsList) {
+        // 水印图层css样式被修改
+        if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+          this.unmount();
+          this.mount();
+          return;
+        }
+        // 子节点被删除
+        if (mutation.type === 'childList' && mutation.removedNodes.length > 0) {
+          this.unmount();
+          this.mount();
+          return;
+        }
+      }
+    });
+    // 以上述配置开始观察目标节点
+    waterObserver.observe(waterNode, { attributes: true, childList: true, subtree: true });
+  }
+
+  return {
+    targetObserver,
+    waterObserver,
+    disconnect() {
+      targetObserver.disconnect();
+      targetObserver = null;
+      waterObserver.disconnect();
+      waterObserver = null;
+    },
+  };
+}class Watermark {
   /**
    * @param {Object} options
    * @param {string} options.text 水印文本
@@ -117,4 +169,4 @@ export default class Watermark {
     }
     return waterWrapper;
   }
-}
+}return Watermark;})));

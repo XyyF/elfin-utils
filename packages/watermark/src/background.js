@@ -58,7 +58,7 @@ export default class Watermark {
       top: 0,
       left: 0,
       'z-index': 1,
-      opacity: 0.1,
+      opacity: 0.2,
       'pointer-events': 'none',
       'background-repeat': 'repeat',
       'background-image': `url("${this.options.img}")`,
