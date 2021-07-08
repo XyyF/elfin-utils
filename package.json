@@ -4,6 +4,7 @@
   "description": "elfin-utils",
   "main": "",
   "scripts": {
+    "link": "lerna bootstrap",
     "build": "lerna run build",
     "lint": "eslint ./packages --ext .js,.jsx,.ts,.tsx,.vue --fix",
     "test": "echo \"Error: no test specified\" && exit 1"

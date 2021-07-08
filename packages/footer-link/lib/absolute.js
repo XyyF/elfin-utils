@@ -42,7 +42,7 @@ function createSection() {
   a.target = '_blank';
   a.rel = 'noopener';
   const img = document.createElement('img');
-  img.src = 'https://rengar-1253859411.cos.ap-chengdu.myqcloud.com/elfin.png';
+  img.src = 'https://rengarxiao.com/XyyF/images/elfin.png';
   a.appendChild(img);
   section.appendChild(a);
 
