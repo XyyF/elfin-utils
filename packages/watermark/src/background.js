@@ -27,6 +27,12 @@ export default class Watermark {
     if (this.options.observer) {
       this.observers = observer.call(this, this.options.el, waterWrapper);
     }
+    if (this.options.resize) {
+      window.onresize = () => {
+        this.unmount();
+        this.mount();
+      };
+    }
   }
 
   unmount() {

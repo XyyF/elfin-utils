@@ -253,7 +253,8 @@
     <script src="../lib/background.umd.js"></script>
     <script>
       new Watermark({
-        observer: 'true',
+        observer: true,
+        resize: true,
         el: document.querySelector('.main'),
         img: './background.png',
       }).mount();

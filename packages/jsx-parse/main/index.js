@@ -1,5 +1,6 @@
 const TagConst = {
   Comment: '#comment',
+  Text: '#text',
 };
 
 // 匹配空格、换行符
@@ -18,11 +19,10 @@ class Lexer {
   }
 
   lex() {
-    // 初始化stack栈，在顶层预留虚拟vdom节点，包裹整个真实VDOM
-    const vdom = {
-      children: [],
-    }
-    let stack = [vdom];
+    // 在顶层预留虚拟vdom节点，包裹整个真实VDOM
+    const topVdom = { children: [] };
+    // 初始化stack栈
+    let stack = [topVdom];
 
     /**
      * 当遇到起始标签时，将节点入栈
@@ -50,13 +50,26 @@ class Lexer {
       if (this.string.indexOf('</') === 0) {
         const token = this.matchEndTag();
         if (token) {
-          if (this.string.length === 0) return vdom.children;
-          stack.pop();
+          // 如果此时没有字符了，代表遍历已经结束
+          // if (this.string.length === 0) return topVdom.children;
+          // 当前 tag 已经闭合，将stack中的标签出栈
+          const stackNode = stack.pop();
+          // 校验 如果闭合标签tagName不匹配，报错
+          if (stackNode.tagName !== token.tagName) {
+            throw new Error('错误的闭合标签');
+          }
           continue;
         }
       }
 
       // 处理注释标签 <!--
+      if (this.string.indexOf('<!--') === 0) {
+        const token = this.matchComment();
+        if (token) {
+          pushChildrenNode(token);
+          continue;
+        }
+      }
 
       // 处理起始标签 <
       if (this.string.indexOf('<') === 0) {
@@ -64,6 +77,7 @@ class Lexer {
         if (token) {
           pushChildrenNode(token);
           stack.push(token);
+          continue;
         }
       }
 
@@ -74,7 +88,7 @@ class Lexer {
       }
     }
 
-    return vdom.children;
+    return topVdom.children;
   }
 
   /**
@@ -95,6 +109,70 @@ class Lexer {
       const [str, props] = this.parseTagAttr();
       node.props = props;
       this.string = str;
+
+      return node;
+    }
+    return null;
+  }
+
+  /**
+   * 处理结束节点 </
+   */
+  matchEndTag() {
+    const match = this.string.match(/\<\/(\w+)\>/);
+    if (match) {
+      const tagName = match[1];
+      const node = {
+        type: tagName,
+        props: {},
+        children: [],
+      };
+
+      this.string = this.string.replace(match[0], '');
+
+      return node;
+    }
+    return null;
+  }
+
+  /**
+   * 解析文本内容
+   * tips: 在jsx中，不推荐直接在元素内容中书写 <、> 等符号，可以放入字符串变量中
+   */
+  matchText() {
+    const index = this.string.indexOf('<');
+    const sIndex = this.string.indexOf('{');
+    const eIndex = this.string.indexOf('}');
+
+    // 文本内容
+    if (index === -1 || index < sIndex) {
+      const nodeValue = this.string.slice(0, index);
+      this.string = this.string.slice(index);
+      if (nodeValue.length === 0) return null;
+      return {
+        type: '#text',
+        nodeValue,
+      };
+    }
+    // jsx内容
+    if (sIndex === 0) {
+
+    }
+    return null;
+  }
+
+  /**
+   * 解析注释节点 <!--
+   */
+  matchComment() {
+    const match = this.string.match(/\<!--\w+\>/);
+    if (match) {
+      const node = {
+        type: TagConst.Comment,
+        nodeValue: match[0],
+      };
+
+      this.string = this.string.replace(match[0], '');
 
       return node;
     }
@@ -191,51 +269,5 @@ class Lexer {
       }
     }
     throw new Error('需要闭合标签');
-  }
-
-  /**
-   * 处理结束节点 </
-   */
-  matchEndTag() {
-    const match = this.string.match(/\<\/(\w+)\>/);
-    if (match) {
-      const tagName = match[1];
-      const node = {
-        type: tagName,
-        props: {},
-        children: [],
-      };
-
-      this.string = this.string.replace(match[0], '');
-
-      return node;
-    }
-    return null;
-  }
-
-  /**
-   * 解析文本内容
-   * tips: 在jsx中，不推荐直接在元素内容中书写 <、> 等符号，可以放入字符串变量中
-   */
-  matchText() {
-    const index = this.string.indexOf('<');
-    const sIndex = this.string.indexOf('{');
-    const eIndex = this.string.indexOf('}');
-
-    // 文本内容
-    if (index === -1 || index < sIndex) {
-      const nodeValue = this.string.slice(0, index);
-      this.string = this.string.slice(index);
-      if (nodeValue.length === 0) return null;
-      return {
-        type: '#text',
-        nodeValue,
-      };
-    }
-    // jsx内容
-    if (sIndex === 0) {
-
-    }
-    return null;
   }
 }
