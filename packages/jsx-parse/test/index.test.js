@@ -3,6 +3,17 @@ const JsxParser = require('../main/index');
 describe('jsx-parse', () => {
   describe('纯文本节点', () => {
     test('单行文本', () => {
+      const str = ' inline text ';
+      const res = JsxParser(str);
+      expect(res).toEqual([
+        {
+          type: '#text',
+          nodeValue: ' inline text ',
+        },
+      ]);
+    });
+
+    test('换行文本', () => {
       const str = `
         inline text
       `;
@@ -13,6 +24,21 @@ describe('jsx-parse', () => {
           nodeValue: `
         inline text
       `,
+        },
+      ]);
+    });
+
+    test('多行文本', () => {
+      const str = 'inline text\n' +
+        'inline text\n' +
+        'inline text';
+      const res = JsxParser(str);
+      expect(res).toEqual([
+        {
+          type: '#text',
+          nodeValue: 'inline text\n' +
+          'inline text\n' +
+          'inline text',
         },
       ]);
     });
