@@ -148,14 +148,15 @@ class Lexer {
     // 文本内容，正常文本内容不应包含【<、{、}】标签，会被识别；
     // 如果想要使用这类标签，应该通过 {} 进行渲染；
     // index < sIndex，判断 < 不在 {} 之内；
-    if (index === -1 || index < sIndex) {
+    if (index > -1 || index < sIndex) {
       const nodeValue = this.string.slice(0, index);
-      if (nodeValue.length === 0) return null;
-      this.string = this.string.slice(index);
-      return {
-        type: TagConst.Text,
-        nodeValue,
-      };
+      if (nodeValue.length > 0) {
+        this.string = this.string.slice(index);
+        return {
+          type: TagConst.Text,
+          nodeValue,
+        };
+      }
     }
     // jsx内容
     if (sIndex === 0 && sIndex < eIndex) {
@@ -167,11 +168,12 @@ class Lexer {
         nodeValue,
       };
     }
+    // 纯文本
     if (index === -1 && sIndex === -1) {
       const nodeValue = this.string;
       this.string = '';
       return {
-        type: TagConst.Jsx,
+        type: TagConst.Text,
         nodeValue,
       };
     }

@@ -1,5 +1,4 @@
 const JsxParser = require('../main/index');
-// const JsxParser = require('./reference');
 
 describe('jsx-parse', () => {
   describe('纯文本节点', () => {
@@ -11,7 +10,9 @@ describe('jsx-parse', () => {
       expect(res).toEqual([
         {
           type: '#text',
-          nodeValue: 'inline text',
+          nodeValue: `
+        inline text
+      `,
         },
       ]);
     });
