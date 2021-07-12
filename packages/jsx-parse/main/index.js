@@ -1,6 +1,7 @@
 const TagConst = {
   Comment: '#comment',
   Text: '#text',
+  Jsx: '#jsx',
 };
 
 // 匹配空格、换行符
@@ -144,19 +145,35 @@ class Lexer {
     const sIndex = this.string.indexOf('{');
     const eIndex = this.string.indexOf('}');
 
-    // 文本内容
+    // 文本内容，正常文本内容不应包含【<、{、}】标签，会被识别；
+    // 如果想要使用这类标签，应该通过 {} 进行渲染；
+    // index < sIndex，判断 < 不在 {} 之内；
     if (index === -1 || index < sIndex) {
       const nodeValue = this.string.slice(0, index);
-      this.string = this.string.slice(index);
       if (nodeValue.length === 0) return null;
+      this.string = this.string.slice(index);
       return {
-        type: '#text',
+        type: TagConst.Text,
         nodeValue,
       };
     }
     // jsx内容
-    if (sIndex === 0) {
-
+    if (sIndex === 0 && sIndex < eIndex) {
+      const nodeValue = this.string.slice(sIndex, eIndex);
+      if (nodeValue.length === 0) return null;
+      this.string = this.string.slice(index);
+      return {
+        type: TagConst.Jsx,
+        nodeValue,
+      };
+    }
+    if (index === -1 && sIndex === -1) {
+      const nodeValue = this.string;
+      this.string = '';
+      return {
+        type: TagConst.Jsx,
+        nodeValue,
+      };
     }
     return null;
   }
@@ -255,9 +272,9 @@ class Lexer {
             closureIndex--;
             if (closureIndex === 0) {
               if (state === 'inlineJsx') {
-                props.inlineJsx = { type: '#jsx', nodeValue: attrValue };
+                props.inlineJsx = { type: TagConst.Jsx, nodeValue: attrValue };
               } else {
-                props[attrName] = { type: '#jsx', nodeValue: attrValue };
+                props[attrName] = { type: TagConst.Jsx, nodeValue: attrValue };
               }
               attrValue = attrName = '';
               state = 'attrName';
