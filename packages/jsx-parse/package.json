@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "rollup --file lib/index.umd.js --format umd --name JsxParse -i main/index.js --compact",
     "test": "jest"
   },
   "author": "",

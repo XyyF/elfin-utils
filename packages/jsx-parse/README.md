@@ -3,8 +3,8 @@
 [babel-jsx-parse](https://babeljs.io/repl#?browsers=defaults%2C%20not%20ie%2011%2C%20not%20ie_mob%2011&build=&builtIns=false&corejs=3.6&spec=false&loose=false&code_lz=DwSwdgNuCmAEAu0Ae8g&debug=false&forceAllTransforms=false&shippedProposals=false&circleciRepo=&evaluate=true&fileSize=false&timeTravel=false&sourceType=module&lineWrap=true&presets=env%2Creact%2Cstage-2&prettier=false&targets=&version=7.14.2&externalPlugins=)
 ### 1. 分析目标
 ```js
-`<div {...props} name="{name}" className="div-class" id="1">
-  Life is {'<'} too difficult
+`<div {...props} loop name="{name}" className="div-class" id="1">
+  Life is {<} too difficult
 </div>`
 
 ==> 
@@ -12,14 +12,16 @@
 [{
   type: 'div',
   props: {
-    inlineJsx: {type: '#jsx', nodeValue: 'props'},
+    inlineJsx: [{type: '#jsx', nodeValue: 'props'}],
+    loop: true,
     name: {type: '#jsx', nodeValue: 'name'},
     className: 'div-class',
     id: '1',
     ...
   },
   children: [
-    {type: '#text', nodeValue: 'Life is too difficult'},
+    {type: '#text', nodeValue: 'Life is <'},
+    {type: '#text', nodeValue: ' too difficult'},
   ],
 }]
 
@@ -27,6 +29,10 @@
 
 真实节点
 ```
+
+## 解析节点
+字符串jsx不同于babel解析，因为无法直接区分 '\<div\>\</div\>' 究竟是使用者想要渲染成纯文本还是标签解析，因此，在jsx-parse中：
+- <、{、}符号如果要转义使用，通过{}包裹；
 
 ### 2.1 解析节点起始标签
 当匹配到 \< 字符时，表明可能遇到节点了，那么就需要判断是否满足以下场景（可通过正则验证）：

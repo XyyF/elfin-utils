@@ -97,7 +97,7 @@ class Lexer {
    */
   matchStartTag() {
     // 解析tagName: <div props...> | <div></div> | <div/>
-    const match = this.string.match(/\<(\w[^\s\/]*)\>/);
+    const match = this.string.match(/\<(\w[^\s\/\>]*)/);
     if (match) {
       const tagName = match[1];
       const node = {
@@ -223,6 +223,10 @@ class Lexer {
             return [this.string.slice(i + 1), props];
           }
           if (invalidRegexp.test(word)) {
+            if (attrName) {
+              props[attrName] = true;
+              attrName = '';
+            }
             break;
           } else if (word === '=') {
             if (!attrName) {
@@ -271,8 +275,10 @@ class Lexer {
           if (word === '}') {
             closureIndex--;
             if (closureIndex === 0) {
-              if (state === 'inlineJsx') {
-                props.inlineJsx = { type: TagConst.Jsx, nodeValue: attrValue };
+              if (state === 'inlineJsx' && props.inlineJsx) {
+                props.inlineJsx.push({ type: TagConst.Jsx, nodeValue: attrValue });
+              } else if (state === 'inlineJsx') {
+                props.inlineJsx = [{ type: TagConst.Jsx, nodeValue: attrValue }];
               } else {
                 props[attrName] = { type: TagConst.Jsx, nodeValue: attrValue };
               }

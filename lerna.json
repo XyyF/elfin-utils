@@ -2,6 +2,7 @@
   "npmClient": "npm",
   "packages": [
     "packages/watermark",
+    "packages/jsx-parse",
     "packages/footer-link"
   ],
   "version": "1.0.0"
