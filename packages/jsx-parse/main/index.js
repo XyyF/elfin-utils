@@ -97,7 +97,7 @@ class Lexer {
    */
   matchStartTag() {
     // 解析tagName: <div props...> | <div></div> | <div/>
-    const match = this.string.match(/\<(\w[^\s\/\>]*)/);
+    const match = this.string.match(/\<(\w[^\s\/]*)\>/);
     if (match) {
       const tagName = match[1];
       const node = {
@@ -113,7 +113,7 @@ class Lexer {
 
       return node;
     }
-    return null;
+    throw new Error('错误的符号: <');
   }
 
   /**
@@ -133,7 +133,7 @@ class Lexer {
 
       return node;
     }
-    return null;
+    throw new Error('错误的符号: </');
   }
 
   /**
@@ -147,8 +147,18 @@ class Lexer {
 
     // 文本内容，正常文本内容不应包含【<、{、}】标签，会被识别；
     // 如果想要使用这类标签，应该通过 {} 进行渲染；
-    // index < sIndex，判断 < 不在 {} 之内；
-    if (index > -1 || index < sIndex) {
+    if (sIndex < eIndex && (index === -1 || sIndex < index)) {
+      let text = '';
+      // 处理jsx
+      text += this.string.slice(0, sIndex);
+      text += this.string.slice(sIndex + 1, eIndex);
+      this.string = this.string.slice(eIndex + 1);
+      return {
+        type: TagConst.Text,
+        nodeValue: text,
+      }
+    }
+    if (index > -1) {
       const nodeValue = this.string.slice(0, index);
       if (nodeValue.length > 0) {
         this.string = this.string.slice(index);
@@ -157,27 +167,15 @@ class Lexer {
           nodeValue,
         };
       }
-    }
-    // jsx内容
-    if (sIndex === 0 && sIndex < eIndex) {
-      const nodeValue = this.string.slice(sIndex, eIndex);
-      if (nodeValue.length === 0) return null;
-      this.string = this.string.slice(index);
-      return {
-        type: TagConst.Jsx,
-        nodeValue,
-      };
+      throw new Error('错误的符号: <');
     }
     // 纯文本
-    if (index === -1 && sIndex === -1) {
-      const nodeValue = this.string;
-      this.string = '';
-      return {
-        type: TagConst.Text,
-        nodeValue,
-      };
-    }
-    return null;
+    const nodeValue = this.string;
+    this.string = '';
+    return {
+      type: TagConst.Text,
+      nodeValue,
+    };
   }
 
   /**

@@ -5,16 +5,15 @@
 <body>
   <div id="like_button_container"></div>
 </body>
-<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+<!-- <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 <script src="https://unpkg.com/react@17/umd/react.production.min.js" crossorigin></script>
-<script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
-<script type="text/babel">
-  const LikeButton = function() {
-    const a = '123 < 123{a}'
-    return (
-      <div>{a}`123${a}`</div>
-    )
+<script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script> -->
+<script>
+  const LikeButton = function(str) {
+    console.log(111, str)
+    return str
   }
 const domContainer = document.querySelector('#like_button_container');
-ReactDOM.render(React.createElement(LikeButton), domContainer);
+domContainer.appendChild(LikeButton(`\<div>1231{a}</div>`))
+// ReactDOM.render(React.createElement(LikeButton), domContainer);
 </script>

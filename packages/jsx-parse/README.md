@@ -1,9 +1,10 @@
 ## jsx-parse
 
+[babel-jsx-parse](https://babeljs.io/repl#?browsers=defaults%2C%20not%20ie%2011%2C%20not%20ie_mob%2011&build=&builtIns=false&corejs=3.6&spec=false&loose=false&code_lz=DwSwdgNuCmAEAu0Ae8g&debug=false&forceAllTransforms=false&shippedProposals=false&circleciRepo=&evaluate=true&fileSize=false&timeTravel=false&sourceType=module&lineWrap=true&presets=env%2Creact%2Cstage-2&prettier=false&targets=&version=7.14.2&externalPlugins=)
 ### 1. 分析目标
 ```js
 `<div {...props} name="{name}" className="div-class" id="1">
-  Life is too difficult
+  Life is {'<'} too difficult
 </div>`
 
 ==> 

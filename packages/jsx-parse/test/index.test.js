@@ -12,7 +12,6 @@ describe('jsx-parse', () => {
         },
       ]);
     });
-
     test('换行文本', () => {
       const str = `
         inline text
@@ -27,7 +26,6 @@ describe('jsx-parse', () => {
         },
       ]);
     });
-
     test('多行文本', () => {
       const str = 'inline text\n' +
         'inline text\n' +
@@ -39,6 +37,44 @@ describe('jsx-parse', () => {
           nodeValue: 'inline text\n' +
           'inline text\n' +
           'inline text',
+        },
+      ]);
+    });
+    test('特殊字符', () => {
+      const str = `inline & text`;
+      const res = JsxParser(str);
+      expect(res).toEqual([
+        {
+          type: '#text',
+          nodeValue: 'inline & text',
+        },
+      ]);
+    });
+    test('<字符', () => {
+      const str = `inline{<}text`;
+      const res = JsxParser(str);
+      expect(res).toEqual([
+        {
+          type: '#text',
+          nodeValue: 'inline<',
+        },
+        {
+          type: '#text',
+          nodeValue: 'text',
+        },
+      ]);
+    });
+    test('{}字符', () => {
+      const str = `inline {} text`;
+      const res = JsxParser(str);
+      expect(res).toEqual([
+        {
+          type: '#text',
+          nodeValue: 'inline ',
+        },
+        {
+          type: '#text',
+          nodeValue: ' text',
         },
       ]);
     });
