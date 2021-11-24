@@ -27,16 +27,16 @@ describe('jsx-parse', () => {
       ]);
     });
     test('多行文本', () => {
-      const str = 'inline text\n' +
-        'inline text\n' +
-        'inline text';
+      const str = 'inline text\n'
+        + 'inline text\n'
+        + 'inline text';
       const res = JsxParser(str);
       expect(res).toEqual([
         {
           type: '#text',
-          nodeValue: 'inline text\n' +
-          'inline text\n' +
-          'inline text',
+          nodeValue: 'inline text\n'
+          + 'inline text\n'
+          + 'inline text',
         },
       ]);
     });

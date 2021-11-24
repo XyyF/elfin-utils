@@ -23,13 +23,13 @@ class Lexer {
     // 在顶层预留虚拟vdom节点，包裹整个真实VDOM
     const topVdom = { children: [] };
     // 初始化stack栈
-    let stack = [topVdom];
+    const stack = [topVdom];
 
     /**
      * 当遇到起始标签时，将节点入栈
      * 当遇到结束标签时，出栈节点
      * tips: 在起始标签 ～ 结束标签之间，解析到的新节点都是children
-     * @param {*} vdom 
+     * @param {*} vdom
      */
     function pushChildrenNode(vdom) {
       const lastDom = stack[stack.length - 1];
@@ -97,7 +97,7 @@ class Lexer {
    */
   matchStartTag() {
     // 解析tagName: <div props...> | <div></div> | <div/>
-    const match = this.string.match(/\<(\w[^\s\/\>]*)/);
+    const match = this.string.match(/<(\w[^\s/>]*)/);
     if (match) {
       const tagName = match[1];
       const node = {
@@ -120,7 +120,7 @@ class Lexer {
    * 处理结束节点 </
    */
   matchEndTag() {
-    const match = this.string.match(/\<\/(\w+)\>/);
+    const match = this.string.match(/<\/(\w+)>/);
     if (match) {
       const tagName = match[1];
       const node = {
@@ -156,7 +156,7 @@ class Lexer {
       return {
         type: TagConst.Text,
         nodeValue: text,
-      }
+      };
     }
     if (index > -1) {
       const nodeValue = this.string.slice(0, index);
@@ -182,7 +182,7 @@ class Lexer {
    * 解析注释节点 <!--
    */
   matchComment() {
-    const match = this.string.match(/\<!--\w+\>/);
+    const match = this.string.match(/<!--\w+>/);
     if (match) {
       const node = {
         type: TagConst.Comment,
@@ -213,8 +213,8 @@ class Lexer {
       attrName = '',
       attrValue = '',
       // 匹配jsx时，闭合标签需要完全匹配
-      closureIndex = 0,
-      props = {};
+      closureIndex = 0;
+    const props = {};
     for (let i = 0, l = this.string.length; i < l; i++) {
       const word = this.string[i];
       switch (state) {
@@ -252,7 +252,8 @@ class Lexer {
         case 'quote':
           if (word === '"' || word === "'") {
             props[attrName] = attrValue;
-            attrValue = attrName = '';
+            attrValue = '';
+            attrName = '';
             state = 'attrName';
           } else {
             attrValue += word;
@@ -282,7 +283,8 @@ class Lexer {
               } else {
                 props[attrName] = { type: TagConst.Jsx, nodeValue: attrValue };
               }
-              attrValue = attrName = '';
+              attrValue = '';
+              attrName = '';
               state = 'attrName';
               break;
             }

@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/XyyF/elfin-utils#readme",
   "devDependencies": {
+    "@elfiner/eslint-config-elfin": "^1.0.5",
     "lerna": "^3.22.1",
     "rollup": "^2.34.0"
   }

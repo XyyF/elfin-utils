@@ -1,273 +1,269 @@
 function oneObject(str) {
-  var obj = {}
-  str.split(",").forEach(_ => obj[_] = true)
-  return obj
+  const obj = {};
+  str.split(",").forEach(_ => obj[_] = true);
+  return obj;
 }
-var voidTag = oneObject("area,base,basefont,br,col,frame,hr,img,input,link,meta,param,embed,command,keygen,source,track,wbr")
-var specalTag = oneObject('xmp,style,script,noscript,textarea,template,#comment')
+const voidTag = oneObject("area,base,basefont,br,col,frame,hr,img,input,link,meta,param,embed,command,keygen,source,track,wbr");
+const specalTag = oneObject('xmp,style,script,noscript,textarea,template,#comment');
 
-var hiddenTag = oneObject('style,script,noscript,template')
+const hiddenTag = oneObject('style,script,noscript,template');
 
-var JSXParser = function(a, f) {
+const JSXParser = function (a, f) {
   if (!(this instanceof JSXParser)) {
-      return parse(a, f)
+      return parse(a, f);
   }
-  this.input = a
-  this.getOne = f
-}
+  this.input = a;
+  this.getOne = f;
+};
 JSXParser.prototype = {
-  parse: function() {
-      return parse(this.input, this.getOne)
+  parse: function () {
+      return parse(this.input, this.getOne);
   }
-}
-var rsp = /\s/
+};
+const rsp = /\s/;
   /**
-   * 
-   * 
-   * @param {any} string 
+   *
+   *
+   * @param {any} string
    * @param {any} getOne 只返回一个节点
-   * @returns 
+   * @returns
    */
 function parse(string, getOne) {
-  getOne = (getOne === void 666 || getOne === true)
-  var ret = lexer(string, getOne)
+  getOne = (getOne === void 666 || getOne === true);
+  const ret = lexer(string, getOne);
   if (getOne) {
-      return typeof ret[0] === 'string' ? ret[1] : ret[0]
+      return typeof ret[0] === 'string' ? ret[1] : ret[0];
   }
-  return ret
+  return ret;
 }
 
 function lexer(string, getOne) {
-  var tokens = []
-  var breakIndex = 120
-  var stack = []
-  var origString = string
-  var origLength = string.length
+//   const tokens = [];
+  let breakIndex = 120;
+  const stack = [];
+  const origString = string;
+  const origLength = string.length;
 
-  stack.last = function() {
-      return stack[stack.length - 1]
-  }
-  var ret = []
+  stack.last = function () {
+      return stack[stack.length - 1];
+  };
+  const ret = [];
 
   function addNode(node) {
-      var p = stack.last()
+      const p = stack.last();
       if (p && p.children) {
-          p.children.push(node)
+          p.children.push(node);
       } else {
-          ret.push(node)
+          ret.push(node);
       }
   }
 
-  var lastNode
+  let lastNode;
   do {
       if (--breakIndex === 0) {
-          break
+          break;
       }
-      var arr = getCloseTag(string)
+      let arr = getCloseTag(string);
 
-      if (arr) { //处理关闭标签
-          string = string.replace(arr[0], '')
-          const node = stack.pop()
-              //处理下面两种特殊情况：
-              //1. option会自动移除元素节点，将它们的nodeValue组成新的文本节点
-              //2. table会将没有被thead, tbody, tfoot包起来的tr或文本节点，收集到一个新的tbody元素中
+      if (arr) { // 处理关闭标签
+          string = string.replace(arr[0], '');
+          const node = stack.pop();
+              // 处理下面两种特殊情况：
+              // 1. option会自动移除元素节点，将它们的nodeValue组成新的文本节点
+              // 2. table会将没有被thead, tbody, tfoot包起来的tr或文本节点，收集到一个新的tbody元素中
           if (node.type === 'option') {
               node.children = [{
                   type: '#text',
                   nodeValue: getText(node)
-              }]
+              }];
           } else if (node.type === 'table') {
-              insertTbody(node.children)
+              insertTbody(node.children);
           }
-          lastNode = null
+          lastNode = null;
           if (getOne && ret.length === 1 && !stack.length) {
-              return [origString.slice(0, origLength - string.length), ret[0]]
+              return [origString.slice(0, origLength - string.length), ret[0]];
           }
-          continue
+          continue;
       }
 
-      var arr = getOpenTag(string)
+      arr = getOpenTag(string);
       if (arr) {
-          string = string.replace(arr[0], '')
-          var node = arr[1]
-          addNode(node)
-          var selfClose = !!(node.isVoidTag || specalTag[node.type])
-          if (!selfClose) { //放到这里可以添加孩子
-              stack.push(node)
+          string = string.replace(arr[0], '');
+          const node = arr[1];
+          addNode(node);
+          const selfClose = !!(node.isVoidTag || specalTag[node.type]);
+          if (!selfClose) { // 放到这里可以添加孩子
+              stack.push(node);
           }
           if (getOne && selfClose && !stack.length) {
-              return [origString.slice(0, origLength - string.length), node]
+              return [origString.slice(0, origLength - string.length), node];
           }
-          lastNode = node
-          continue
+          lastNode = node;
+          continue;
       }
 
-      var text = ''
+      let text = '';
       do {
-          //处理<div><<<<<<div>的情况
-          const index = string.indexOf('<')
+          // 处理<div><<<<<<div>的情况
+          const index = string.indexOf('<');
           if (index === 0) {
-              text += string.slice(0, 1)
-              string = string.slice(1)
-
+              text += string.slice(0, 1);
+              string = string.slice(1);
           } else {
-              break
+              break;
           }
       } while (string.length);
-      //处理<div>{aaa}</div>,<div>xxx{aaa}xxx</div>,<div>xxx</div>{aaa}sss的情况
-      const index = string.indexOf('<') //判定它后面是否存在标签
-      const bindex = string.indexOf('{') //判定它后面是否存在jsx
-      const aindex = string.indexOf('}')
+      // 处理<div>{aaa}</div>,<div>xxx{aaa}xxx</div>,<div>xxx</div>{aaa}sss的情况
+      const index = string.indexOf('<'); // 判定它后面是否存在标签
+      const bindex = string.indexOf('{'); // 判定它后面是否存在jsx
+      const aindex = string.indexOf('}');
 
-      let hasJSX = (bindex < aindex) && (index === -1 || bindex < index)
+      const hasJSX = (bindex < aindex) && (index === -1 || bindex < index);
       if (hasJSX) {
           if (bindex !== 0) { // 收集jsx之前的文本节点
-              text += string.slice(0, bindex)
-              string = string.slice(bindex)
+              text += string.slice(0, bindex);
+              string = string.slice(bindex);
           }
-          addText(lastNode, text, addNode)
-          string = string.slice(1) //去掉前面{
-          var arr = parseCode(string)
-          addNode(makeJSX(arr[1]))
-          lastNode = false
-          string = string.slice(arr[0].length + 1) //去掉后面的}
+          addText(lastNode, text, addNode);
+          string = string.slice(1); // 去掉前面{
+          const arr = parseCode(string);
+          addNode(makeJSX(arr[1]));
+          lastNode = false;
+          string = string.slice(arr[0].length + 1); // 去掉后面的}
       } else {
           if (index === -1) {
-              text = string
-              string = ''
+              text = string;
+              string = '';
           } else {
-              text += string.slice(0, index)
-              string = string.slice(index)
+              text += string.slice(0, index);
+              string = string.slice(index);
           }
-          addText(lastNode, text, addNode)
+          addText(lastNode, text, addNode);
       }
-
   } while (string.length);
-  return ret
+  return ret;
 }
 
 
 function addText(lastNode, text, addNode) {
   if (/\S/.test(text)) {
       if (lastNode && lastNode.type === '#text') {
-          lastNode.text += text
+          lastNode.text += text;
       } else {
           lastNode = {
               type: '#text',
               nodeValue: text
-          }
-          addNode(lastNode)
+          };
+          addNode(lastNode);
       }
   }
 }
 
-//它用于解析{}中的内容，如果遇到不匹配的}则返回, 根据标签切割里面的内容 
+// 它用于解析{}中的内容，如果遇到不匹配的}则返回, 根据标签切割里面的内容
 function parseCode(string) { // <div id={ function(){<div/>} }>
-  var word = '', //用于匹配前面的单词
-      braceIndex = 1,
+//   let word = '', // 用于匹配前面的单词
+  let braceIndex = 1,
       codeIndex = 0,
-      nodes = [],
       quote,
       escape = false,
-      state = 'code'
-  for (var i = 0, n = string.length; i < n; i++) {
-      var c = string.charAt(i),
-          next = string.charAt(i + 1)
+      state = 'code';
+  const nodes = [];
+  for (let i = 0, n = string.length; i < n; i++) {
+      let c = string.charAt(i);
+      const  next = string.charAt(i + 1);
       switch (state) {
           case 'code':
               if (c === '"' || c === "'") {
-                  state = 'string'
-                  quote = c
+                  state = 'string';
+                  quote = c;
               } else if (c === '{') {
-                  braceIndex++
+                  braceIndex++;
               } else if (c === '}') {
-                  braceIndex--
+                  braceIndex--;
                   if (braceIndex === 0) {
-                      collectJSX(string, codeIndex, i, nodes)
-                      return [string.slice(0, i), nodes]
+                      collectJSX(string, codeIndex, i, nodes);
+                      return [string.slice(0, i), nodes];
                   }
               } else if (c === '<') {
-                  var word = '',
-                      empty = true ,
-                      index = i - 1
+                  let word = '',
+                      empty = true,
+                      index = i - 1;
                   do {
-                      c = string.charAt(index)
+                      c = string.charAt(index);
                       if (empty && rsp.test(c)) {
-                          continue
+                          continue;
                       }
                       if (rsp.test(c)) {
-                          break
+                          break;
                       }
-                      empty = false
-                      word = c + word
-                      if (word.length > 7) { //性能优化
-                          break
+                      empty = false;
+                      word = c + word;
+                      if (word.length > 7) { // 性能优化
+                          break;
                       }
                   } while (--index >= 0);
-                  var chunkString = string.slice(i)
-                  if (word === '' || /(=>|return|\{|\(|\[|\,)$/.test(word) && /\<\w/.test(chunkString)) {
-                      collectJSX(string, codeIndex, i, nodes)
-                      var chunk = lexer(chunkString, true)
-                      nodes.push(chunk[1])
-                      i += (chunk[0].length - 1) //因为已经包含了<, 需要减1
-                      codeIndex = i + 1
+                  const chunkString = string.slice(i);
+                  if ((word === '' || /(=>|return|{|\(|\[|,)$/.test(word)) && /<\w/.test(chunkString)) {
+                      collectJSX(string, codeIndex, i, nodes);
+                      const chunk = lexer(chunkString, true);
+                      nodes.push(chunk[1]);
+                      i += (chunk[0].length - 1); // 因为已经包含了<, 需要减1
+                      codeIndex = i + 1;
                   }
-
               }
-              break
+              break;
           case 'string':
               if (c == '\\' && (next === '"' || next === "'")) {
-                  escape = !escape
+                  escape = !escape;
               } else if (c === quote && !escape) {
-                  state = 'code'
+                  state = 'code';
               }
-              break
+              break;
       }
-
   }
 }
 
 function collectJSX(string, codeIndex, i, nodes) {
-  var nodeValue = string.slice(codeIndex, i)
-  if (/\S/.test(nodeValue)) { //将{前面的东西放进去
+  const nodeValue = string.slice(codeIndex, i);
+  if (/\S/.test(nodeValue)) { // 将{前面的东西放进去
       nodes.push({
           type: '#jsx',
           nodeValue: nodeValue
-      })
+      });
   }
 }
 
-var rtbody = /^(tbody|thead|tfoot)$/
+const rtbody = /^(tbody|thead|tfoot)$/;
 
 function insertTbody(nodes) {
-  var tbody = false
-  for (var i = 0, n = nodes.length; i < n; i++) {
-      var node = nodes[i]
+  let tbody = false;
+  for (let i = 0, n = nodes.length; i < n; i++) {
+      const node = nodes[i];
       if (rtbody.test(node.nodeName)) {
-          tbody = false
-          continue
+          tbody = false;
+          continue;
       }
 
       if (node.nodeName === 'tr') {
           if (tbody) {
-              nodes.splice(i, 1)
-              tbody.children.push(node)
-              n--
-              i--
+              nodes.splice(i, 1);
+              tbody.children.push(node);
+              n--;
+              i--;
           } else {
               tbody = {
                   nodeName: 'tbody',
                   props: {},
                   children: [node]
-              }
-              nodes.splice(i, 1, tbody)
+              };
+              nodes.splice(i, 1, tbody);
           }
       } else {
           if (tbody) {
-              nodes.splice(i, 1)
-              tbody.children.push(node)
-              n--
-              i--
+              nodes.splice(i, 1);
+              tbody.children.push(node);
+              n--;
+              i--;
           }
       }
   }
@@ -276,165 +272,167 @@ function insertTbody(nodes) {
 
 function getCloseTag(string) {
   if (string.indexOf("</") === 0) {
-      var match = string.match(/\<\/(\w+)>/)
+      const match = string.match(/<\/(\w+)>/);
       if (match) {
-          var tag = match[1]
-          string = string.slice(3 + tag.length)
+          const tag = match[1];
+          string = string.slice(3 + tag.length);
           return [match[0], {
               type: tag
-          }]
+          }];
       }
   }
-  return null
+  return null;
 }
 
 function getOpenTag(string) {
   if (string.indexOf("<") === 0) {
-      var i = string.indexOf('<!--') //处理注释节点
+      const i = string.indexOf('<!--'); // 处理注释节点
       if (i === 0) {
-          var l = string.indexOf('-->')
+          const l = string.indexOf('-->');
           if (l === -1) {
-              thow('注释节点没有闭合 ' + string.slice(0, 100))
+              thow(`注释节点没有闭合 ${string.slice(0, 100)}`);
           }
-          var node = {
+          const node = {
               type: '#comment',
               nodeValue: string.slice(4, l)
-          }
+          };
 
-          return [string.slice(0, l + 3), node]
+          return [string.slice(0, l + 3), node];
       }
-      var match = string.match(/\<(\w[^\s\/\>]*)/) //处理元素节点
+      const match = string.match(/<(\w[^\s/>]*)/); // 处理元素节点
       if (match) {
-          var leftContent = match[0],
-              tag = match[1]
-          var node = {
+          let leftContent = match[0];
+          const  tag = match[1];
+          const node = {
               type: tag,
               props: {},
               children: []
-          }
+          };
 
-          string = string.replace(leftContent, '') //去掉标签名(rightContent)
-          var arr = getAttrs(string) //处理属性
+          string = string.replace(leftContent, ''); // 去掉标签名(rightContent)
+          const arr = getAttrs(string); // 处理属性
           if (arr) {
-              node.props = arr[1]
-              string = string.replace(arr[0], '')
-              leftContent += arr[0]
+              node.props = arr[1];
+              string = string.replace(arr[0], '');
+              leftContent += arr[0];
           }
 
-          if (string[0] === '>') { //处理开标签的边界符
-              leftContent += '>'
-              string = string.slice(1)
+          if (string[0] === '>') { // 处理开标签的边界符
+              leftContent += '>';
+              string = string.slice(1);
               if (voidTag[node.type]) {
-                  node.isVoidTag = true
+                  node.isVoidTag = true;
               }
-          } else if (string.slice(0, 2) === '/>') { //处理开标签的边界符
-              leftContent += '/>'
-              string = string.slice(2)
-              node.isVoidTag = true
-          } 
+          } else if (string.slice(0, 2) === '/>') { // 处理开标签的边界符
+              leftContent += '/>';
+              string = string.slice(2);
+              node.isVoidTag = true;
+          }
 
-          if (!node.isVoidTag && specalTag[tag]) { //如果是script, style, xmp等元素
-              var closeTag = '</' + tag + '>'
-              var j = string.indexOf(closeTag)
-              var nodeValue = string.slice(0, j)
-              leftContent += nodeValue + closeTag
+          if (!node.isVoidTag && specalTag[tag]) { // 如果是script, style, xmp等元素
+              const closeTag = `</${tag}>`;
+              const j = string.indexOf(closeTag);
+              const nodeValue = string.slice(0, j);
+              leftContent += nodeValue + closeTag;
               node.children.push({
                   type: '#text',
                   nodeValue: nodeValue
-              })
+              });
           }
 
-          return [leftContent, node]
+          return [leftContent, node];
       }
   }
 }
 
 function getText(node) {
-  var ret = ''
-  node.children.forEach(function(el) {
+  let ret = '';
+  node.children.forEach(function (el) {
       if (el.type === '#text') {
-          ret += el.nodeValue
+          ret += el.nodeValue;
       } else if (el.children && !hiddenTag[el.type]) {
-          ret += getText(el)
+          ret += getText(el);
       }
-  })
-  return ret
+  });
+  return ret;
 }
 
 function getAttrs(string) {
-  var state = 'AttrNameOrJSX',
+  let state = 'AttrNameOrJSX',
       attrName = '',
       attrValue = '',
       quote,
-      escape,
-      props = {}
+      escape;
+  const props = {};
 
-  for (var i = 0, n = string.length; i < n; i++) {
-      var c = string[i]
+  for (let i = 0, n = string.length; i < n; i++) {
+      const c = string[i];
+      let arr = [];
       switch (state) {
           case 'AttrNameOrJSX':
               if (c === '/' || c === '>') {
-                  return [string.slice(0, i), props]
+                  return [string.slice(0, i), props];
               }
               if (rsp.test(c)) {
                   if (attrName) {
-                      state = 'AttrEqual'
+                      state = 'AttrEqual';
                   }
               } else if (c === '=') {
                   if (!attrName) {
-                      throw '必须指定属性名'
+                      throw '必须指定属性名';
                   }
-                  state = 'AttrQuoteOrJSX'
+                  state = 'AttrQuoteOrJSX';
               } else if (c === '{') {
-                  state = 'SpreadJSX'
+                  state = 'SpreadJSX';
               } else {
-                  attrName += c
+                  attrName += c;
               }
-              break
+              break;
           case 'AttrEqual':
               if (c === '=') {
-                  state = 'AttrQuoteOrJSX'
+                  state = 'AttrQuoteOrJSX';
               }
-              break
+              break;
           case 'AttrQuoteOrJSX':
               if (c === '"' || c === "'") {
-                  quote = c
-                  state = 'AttrValue'
-                  escape = false
+                  quote = c;
+                  state = 'AttrValue';
+                  escape = false;
               } else if (c === '{') {
-                  state = 'JSX'
+                  state = 'JSX';
               }
-              break
+              break;
           case 'AttrValue':
               if (c === '\\') {
-                  escape = !escape
+                  escape = !escape;
               }
               if (c !== quote) {
-                  attrValue += c
+                  attrValue += c;
               } else if (c === quote && !escape) {
-                  props[attrName] = attrValue
-                  attrName = attrValue = ''
-                  state = 'AttrNameOrJSX'
+                  props[attrName] = attrValue;
+                  attrName = '';
+                  attrValue = '';
+                  state = 'AttrNameOrJSX';
               }
-              break
+              break;
           case 'SpreadJSX':
-              i += 3
+              i += 3;
           case 'JSX':
+              arr = parseCode(string.slice(i));
+              i += arr[0].length;
 
-              var arr = parseCode(string.slice(i))
-              i += arr[0].length
-
-              props[state === 'SpreadJSX' ? 'spreadAttribute' : attrName] = makeJSX(arr[1])
-              attrName = attrValue = ''
-              state = 'AttrNameOrJSX'
-              break
+              props[state === 'SpreadJSX' ? 'spreadAttribute' : attrName] = makeJSX(arr[1]);
+              attrName = '';
+              attrValue = '';
+              state = 'AttrNameOrJSX';
+              break;
       }
   }
-  throw '必须关闭标签'
+  throw '必须关闭标签';
 }
 
 function makeJSX(JSXNode) {
-  return JSXNode.length === 1 && JSXNode[0].type === '#jsx' ? JSXNode[0] : { type: '#jsx', nodeValue: JSXNode }
+  return JSXNode.length === 1 && JSXNode[0].type === '#jsx' ? JSXNode[0] : { type: '#jsx', nodeValue: JSXNode };
 }
 
-module.exports = JSXParser
+module.exports = JSXParser;

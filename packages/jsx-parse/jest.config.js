@@ -11,14 +11,14 @@ module.exports = {
         '<rootDir>/test/',
     ],
     testRegex: '.+?\\.test\\.js$',
-    'verbose': true,
-    'moduleDirectories': [
+    verbose: true,
+    moduleDirectories: [
         'node_modules',
     ],
-    'modulePaths': [
+    modulePaths: [
         '<rootDir>/node_modules',
     ],
-    'globals': {
-        'NODE_ENV': 'test',
+    globals: {
+        NODE_ENV: 'test',
     },
-}
+};

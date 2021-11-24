@@ -1,4 +1,5 @@
-(function(){'use strict';/**
+(function () {
+ 'use strict';/**
  * 创建footer容器
  */
 function createFooter() {
@@ -101,4 +102,5 @@ window.addEventListener('load', function () {
   addStyle();
 
   document.body.appendChild(footer);
-});}());
+});
+}());
