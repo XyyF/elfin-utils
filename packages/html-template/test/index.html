@@ -83,13 +83,16 @@
     <div>
       <div>
         <h2>图片区间:</h2>
+        \\\
         <div id="imgRange"></div>
       </div>
     </div>
     <script id="imgRange_tpl" type="text/html">
+      <%# 注释 %>
       <% if (imgRange.length > 0) { %>
         <% for (i = 0, len = imgRange.length; i < len; i++) { %>
           <div class="img_item">
+            、\\\\'''""`${}`
             <div class="img_wrap">
               <img src="<%= imgRange[i].url %>" />
             </div>
@@ -101,63 +104,7 @@
       <% } %>
     </script>
     <script src="../src/index.js"></script>
-    <script>
-      /**
-       * 发送ajax请求
-       * @param {string} method 方法名，GET、POST
-       * @param {obejct} options
-       * @param {string} options.url 请求url
-       * @param {string|object} options.data 携带数据，GET请求为字符串，POST请求为对象
-       * @returns 
-       */
-      function ajaxApi(method, options) {
-        // 如果是GET请求，将data中的数据添加到url中；
-        if (method === 'GET' && options.data) {
-          options.url += `?${options.data}`;
-        }
-
-        // 如果不是自定义的请求，那么带上默认的域名
-        if (options.url.indexOf('http') !== 0) {
-          options.url = window.location.origin + options.url;
-        }
-
-        return new Promise((resolve, reject) => {
-          let xhr = new XMLHttpRequest();
-
-          // 设置请求监听回调
-          xhr.onerror = function () {
-            reject(new Error('request.error'));
-          };
-          xhr.ontimeout = function () {
-            reject(new Error('request.error.timeout'));
-          };
-          xhr.onload = function () {
-            resolve(xhr.response);
-          };
-          xhr.onloadend = function () {
-            xhr.onerror = null;
-            xhr.ontimeout = null;
-            xhr.onload = null;
-            xhr.onloadend = null;
-          };
-          // 是否可以跨站点访问
-          // xhr.withCredentials = true;
-          // 超时时间
-          xhr.timeout = 5000;
-          // 设置请求头
-          xhr.open(method, options.url);
-          xhr.setRequestHeader('Accept', 'application/json');
-          xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8');
-
-          // 发送请求
-          if (method === 'GET') {
-            xhr.send();
-          } else {
-            xhr.send(JSON.stringify(options.data));
-          }
-        });
-      }
-    </script>
+    <script src="https://imgcache.qq.com/bossweb/service/js/template/txtpl_v1.1.min.js"></script>
     <script>
       // 颜色区间
       function initColorRange() {
@@ -171,9 +118,22 @@
             type: result[1][result[1].length - 1],
           });
         }
-        console.log(111, elfinTpl(document.querySelector('#imgRange_tpl').innerHTML, { imgRange: [{url: '12', name: '123'}] }))
 
-        document.querySelector('#imgRange').innerHTML = elfinTpl(document.querySelector('#imgRange_tpl').innerHTML, { imgRange: [{url: '12', name: '123'}] });
+        document.querySelector('#imgRange').innerHTML = elfinTpl(
+          document.querySelector('#imgRange_tpl').innerHTML,
+          { imgRange: [{url: '12', name: '123'}] },
+          true,
+        );
+        console.log(111, elfinTpl(
+          document.querySelector('#imgRange_tpl').innerHTML,
+          { imgRange: [{url: '12', name: '123'}] },
+          true,
+        ));
+        console.log(111, elfinTpl(
+          document.querySelector('#imgRange_tpl').innerHTML,
+          { imgRange: [{url: '12', name: '123'}] },
+          true,
+        ));
       }
       initColorRange();
     </script>

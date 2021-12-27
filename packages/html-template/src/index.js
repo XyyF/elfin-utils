@@ -5,13 +5,18 @@
    * @param {*} cache 是否缓存
    */
   function elfinTpl(tpl, data, cache) {
-    var dataValue = [];
+    var dataValue = [], fn;
     if (cache && cached[tpl]) {
       // 缓存
+      for (var i = 0, d = cached[tpl].dataNames, j = d.length; i < j; i++) {
+        dataValue.push(data[d[i]]);
+      }
+      fn = cached[tpl].fn;
     } else {
-      var transStr = (function(str) {
+      var transStr = (function (str) {
         // 转换字符串
-        let type = '', result = '', token = '', strIndex = 0, totalIndex = str.length;
+        // type 1 <%= 2 <%# 3 <%
+        let type = '', result = '', tokens = '', strIndex = 0, totalIndex = str.length;
         while (strIndex < totalIndex) {
           // <%# %> 注释标签，不执行、不输出内容
           // <% %> '脚本' 标签，用于流程控制，无输出
@@ -28,55 +33,81 @@
             type = 2;
             strIndex += 3;
           } else if (preStr == '<%') {
+            // 逻辑
             clearToken();
             type = 3;
-            strIndex += 2;
+            strIndex += 3;
           } else if (preStr == '%>') {
             clearToken();
             strIndex += 2;
-          } else if (str[strIndex] == '\n') {
-            strIndex++;
           } else {
-            token += str[strIndex];
+            // 字符处理
+            switch (str[strIndex]) {
+              case "\\": // 转义
+              case "'":
+                tokens += '\\' + str[strIndex];
+                break;
+              case "\n": // 跳过
+              case "\r":
+              case "\t":
+                break;
+              default: // 其他字符
+               tokens += str[strIndex];
+            }
             strIndex++;
           }
         }
 
         function clearToken() {
-          switch(type) {
-            case 1: 
-              result = result + ";s += " + token + ";";
+          switch (type) {
+            case 1:
+              result = result + "s += " + tokens + ";\n";
               break;
             case 2:
-              result = result + ";s += `<!-- " + token + " -->;`";
+              result = result + "s += '<!-- " + tokens + " -->'\n";
               break;
             case 3:
-              result = result + token;
+              result = result + tokens + '\n';
               break;
             default:
-              result = result + "s += `" + token + "`;";
+              result = result + "s += '" + tokens + "';\n";
           }
-          token = '';
+          tokens = '';
           type = '';
         }
-
-        if (token) result += "s += `" + token + "`;";
-        
+        // 遗留token
+        if (tokens) result += "s += '" + tokens + "';";
         return result;
       })(tpl);
-      var fnBody = "var s = '';" + transStr + ";return s;";
+      // 执行字符串
+      var fnBody = "var s = '';\n" + transStr + ";\n return s;";
       var dataNames = [];
-      for(var key in data) {
+      for (var key in data) {
         dataNames.push(key);
         dataValue.push(data[key]);
       }
-      var fn = new Function(dataNames, fnBody);
+      fn = new Function(dataNames, fnBody);
+      cache && (cached[tpl] = { dataNames, fn });
     }
 
     try {
       return fn.apply(e, dataValue);
     } catch (error) {
-      console.log(11, error);
+      // 错误代码调试
+      var b = "elfinTpl" + Date.now()
+        , E = "var " + b + "=" + fn.toString()
+        , S = document.getElementsByTagName("head")[0]
+        , x = document.createElement("script")
+        , ua = navigator.userAgent.toLowerCase();
+      if (ua.indexOf("gecko") > -1 && ua.indexOf("khtml") == -1) {
+        e.eval.call(e, E),
+          e[b].apply(e, dataValue);
+        return
+      }
+      x.innerHTML = E,
+        S.appendChild(x),
+        S.removeChild(x),
+        e[b].apply(e, dataValue)
     }
   }
 
