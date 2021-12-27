@@ -4,7 +4,7 @@
    * @param {*} data 模板数据
    * @param {*} cache 是否缓存
    */
-  function elfinTpl(tpl, data, cache) {
+  function elfinTpl(tpl, data, cache = true) {
     var dataValue = [], fn;
     if (cache && cached[tpl]) {
       // 缓存

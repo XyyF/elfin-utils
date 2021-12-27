@@ -9,119 +9,30 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>kf-pixui-preview</title>
-    </link>
-    <style>
-      div {
-        box-sizing: border-box;
-      }
-
-      #colorRange {
-        margin-bottom: 18px;
-      }
-
-      .color_item {
-        position: relative;
-        display: inline-block;
-        margin-bottom: 18px;
-      }
-
-      .color_label {
-        position: absolute;
-        top: 20px;
-        padding: 0;
-        line-height: 20px;
-        height: 20px;
-        margin-top: -10px;
-        font-size: 15px;
-        width: 140px;
-        text-align: right;
-      }
-
-      .color_margin150 {
-        margin-left: 150px;
-      }
-
-      .color_cell {
-        width: 200px;
-        height: 40px;
-        line-height: 40px;
-        display: table;
-      }
-
-      .color_cell_r {
-        border-width: 10px;
-        border-style: solid;
-      }
-
-      .color_value {
-        font-size: 12px;
-      }
-
-      .img_item {
-        height: 176px;
-        margin-right: 20px;
-        margin-bottom: 20px;
-        display: inline-block;
-        margin-bottom: 18px;
-      }
-
-      .img_wrap {
-        height: 150px;
-        background-color: rgba(0, 0, 0, .03);
-      }
-
-      .img_wrap img {
-        max-height: 150px;
-        transform: translate(-50%, -50%);
-        position: relative;
-        top: 50%;
-        left: 50%;
-      }
-    </style>
   </head>
   <body>
-    <div>
-      <div>
-        <h2>图片区间:</h2>
-        \\\
-        <div id="imgRange"></div>
-      </div>
-    </div>
-    <script id="imgRange_tpl" type="text/html">
-      <%# 注释 %>
-      <% if (imgRange.length > 0) { %>
-        <% for (i = 0, len = imgRange.length; i < len; i++) { %>
-          <div class="img_item">
-            、\\\\'''""`${}`
-            <div class="img_wrap">
-              <img src="<%= imgRange[i].url %>" />
-            </div>
-            <div class="img_name">
-              <%= imgRange[i].name %>
-            </div>
-          </div>
+    <div>请在控制台查看运行时间</div>
+    <script id="test_tpl" type="text/html">
+      <ul>
+        <% for (i = 0, l = list.length; i < l; i++) { %>
+          <li>姓名：<%= list[i].name %> 年龄：<%= list[i].age %></li>
         <% } %>
-      <% } %>
+      </ul>
     </script>
     <script src="../src/index.js"></script>
     <script src="https://imgcache.qq.com/bossweb/service/js/template/txtpl_v1.1.min.js"></script>
     <script>
-      document.querySelector('#imgRange').innerHTML = elfinTpl(
-        document.querySelector('#imgRange_tpl').innerHTML,
-        { imgRange: [{ url: '12', name: '123' }] },
-        true,
-      );
-      console.log(111, elfinTpl(
-        document.querySelector('#imgRange_tpl').innerHTML,
-        { imgRange: [{ url: '12', name: '123' }] },
-        true,
-      ));
-      console.log(111, elfinTpl(
-        document.querySelector('#imgRange_tpl').innerHTML,
-        { imgRange: [{ url: '12', name: '123' }] },
-        true,
-      ));
-      initColorRange();
+      let text = document.querySelector('#test_tpl').innerHTML;
+      console.time('10000数据1次渲染');
+      for (let i = 0, l = 10000; i < l; i++) {
+        elfinTpl(text, { list: [{index : i, name: 'bobo', age : 30 }] });
+      }
+      console.timeEnd('10000数据1次渲染');
+      console.time('1数据10000次渲染');
+      for (let i = 0, l = 10000; i < l; i++) {
+        elfinTpl(text, { list: [{index : i, name: 'bobo', age : 30 }] });
+      }
+      console.timeEnd('1数据10000次渲染');
     </script>
   </body>
 </html>
