@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta name="apple-mobile-web-app-capable" content="no" />
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>kf-pixui-preview</title>
+  </head>
+  <body>
+    <div>请在控制台查看运行时间</div>
+    <script id="test_tpl" type="text/html">
+      <ul>
+        <% for (i = 0, l = list.length; i < l; i++) { %>
+          <li>姓名：<%= list[i].name %> 年龄：<%= list[i].age %></li>
+        <% } %>
+      </ul>
+    </script>
+    <script src="../src/index.js"></script>
+    <script src="https://imgcache.qq.com/bossweb/service/js/template/txtpl_v1.1.min.js"></script>
+    <script>
+      let text = document.querySelector('#test_tpl').innerHTML;
+      console.time('10000数据1次渲染');
+      for (let i = 0, l = 10000; i < l; i++) {
+        elfinTpl(text, { list: [{index : i, name: 'bobo', age : 30 }] });
+      }
+      console.timeEnd('10000数据1次渲染');
+      console.time('1数据10000次渲染');
+      for (let i = 0, l = 10000; i < l; i++) {
+        elfinTpl(text, { list: [{index : i, name: 'bobo', age : 30 }] });
+      }
+      console.timeEnd('1数据10000次渲染');
+    </script>
+  </body>
+</html>
