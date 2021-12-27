@@ -59,18 +59,19 @@
         }
 
         function clearToken() {
+          if (tokens == '') return;
           switch (type) {
             case 1:
-              result = result + "s += " + tokens + ";\n";
+              result = result + "s += " + tokens + ";\n ";
               break;
             case 2:
-              result = result + "s += '<!-- " + tokens + " -->'\n";
+              result = result + "s += '<!-- " + tokens + " -->';\n ";
               break;
             case 3:
-              result = result + tokens + '\n';
+              result = result + tokens + '\n ';
               break;
             default:
-              result = result + "s += '" + tokens + "';\n";
+              result = result + "s += '" + tokens + "';\n ";
           }
           tokens = '';
           type = '';
@@ -80,7 +81,7 @@
         return result;
       })(tpl);
       // 执行字符串
-      var fnBody = "var s = '';\n" + transStr + ";\n return s;";
+      var fnBody = "var s = '';\n " + transStr + ";\n return s;";
       var dataNames = [];
       for (var key in data) {
         dataNames.push(key);
@@ -102,16 +103,16 @@
       if (ua.indexOf("gecko") > -1 && ua.indexOf("khtml") == -1) {
         e.eval.call(e, E),
           e[b].apply(e, dataValue);
-        return
+        return;
       }
       x.innerHTML = E,
         S.appendChild(x),
         S.removeChild(x),
-        e[b].apply(e, dataValue)
+        e[b].apply(e, dataValue);
     }
   }
 
   var e = window, cached = {};
 
-  typeof exports != "undefined" ? exports.elfinTpl = elfinTpl : e.elfinTpl = elfinTpl
+  typeof exports != "undefined" ? exports.elfinTpl = elfinTpl : e.elfinTpl = elfinTpl;
 })();
