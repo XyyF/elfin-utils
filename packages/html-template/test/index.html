@@ -103,37 +103,24 @@
         <% } %>
       <% } %>
     </script>
-    <script src="../src/index.js"></script>
+    <script src="https://rengar-1253859411.file.myqcloud.com/libs/elfinTpl/1.0.0/index.min.js"></script>
     <script src="https://imgcache.qq.com/bossweb/service/js/template/txtpl_v1.1.min.js"></script>
     <script>
-      // 颜色区间
-      function initColorRange() {
-        let res = '.a{color:#adaada}';
-        var regexp = /\.([a-z_0-9]+){[a-zA-Z0-9-]+:([#a-zA-Z0-9-]+);?}/g;
-        var colorRange = [], result = null;
-        while (result = regexp.exec(res)) {
-          colorRange.push({
-            name: result[1],
-            color: result[2],
-            type: result[1][result[1].length - 1],
-          });
-        }
-
-        document.querySelector('#imgRange').innerHTML = elfinTpl(
-          document.querySelector('#imgRange_tpl').innerHTML,
-          { imgRange: [{url: '12', name: '123'}] },
-          true,
-        );
-        console.log(111, elfinTpl(
-          document.querySelector('#imgRange_tpl').innerHTML,
-          { imgRange: [{url: '12', name: '123'}] },
-          true,
-        ));
-        console.log(111, elfinTpl(
-          document.querySelector('#imgRange_tpl').innerHTML,
-          { imgRange: [{url: '12', name: '123'}] },
-          true,
-        ));
+      document.querySelector('#imgRange').innerHTML = elfinTpl(
+        document.querySelector('#imgRange_tpl').innerHTML,
+        { imgRange: [{ url: '12', name: '123' }] },
+        true,
+      );
+      console.log(111, elfinTpl(
+        document.querySelector('#imgRange_tpl').innerHTML,
+        { imgRange: [{ url: '12', name: '123' }] },
+        true,
+      ));
+      console.log(111, elfinTpl(
+        document.querySelector('#imgRange_tpl').innerHTML,
+        { imgRange: [{ url: '12', name: '123' }] },
+        true,
+      ));
       }
       initColorRange();
     </script>

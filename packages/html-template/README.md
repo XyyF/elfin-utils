@@ -2,7 +2,7 @@
 
 ## CDN
 ```html
-<script src="https://rengar-1253859411.file.myqcloud.com/libs/elfinTpl%40next"></script>
+<script src="https://rengar-1253859411.file.myqcloud.com/libs/elfinTpl/1.0.0/index.min.js"></script>
 ```
 
 ## elfin tpl
