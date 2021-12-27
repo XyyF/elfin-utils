@@ -1,17 +1,18 @@
 # html-template 前端html模板解析引擎
 
-## CDN
+### CDN
 ```html
 <script src="https://rengar-1253859411.file.myqcloud.com/libs/elfinTpl/1.0.0/index.min.js"></script>
 ```
 
 ## elfin tpl
 
-在原生网页中，无需 React、Vue 等框架，将html模板解析为相应的节点元素；
+在原生网页(推荐h5)中，无需 React、Vue 等框架，将html模板解析为相应的节点元素；
 
 理念基于 ejs 模板引擎，本质可以理解为一个字符串拼接工具；
 
 1.1 功能：
+- 小体量，仅`1.24KB`大小；
 - 支持数据交互（对象、数组、字符串...）（推荐将数据摊平降低复杂度；
 - 支持基本语法: if、for操作；
 - 缓存模板解析结果（相同模板再次操作效率更好）；
@@ -97,3 +98,19 @@ new Function() 执行
 ```
 
 ### 2.4 错误调试
+
+`new Function()` 、 `eval` 调试困难，即使其中的代码报错，也无法提示代码报错的具体位置；<br/>
+通过在 window定义一个数据，在该数据上模拟 调用new Function()方法，即可进行调试代码。
+
+```javascript
+var _variable = "elfinTpl" + Date.now();
+_varString = "var " + _variable + "=" + fn.toString();
+// ... 获取DOM
+_script.innerHTML = _varString;
+// 动态添加 script标签，运行代码，在 winodw 上添加变量 _variable
+_head.appendChild(_script);
+_head.removeChild(_script);
+// 运行 window[_variable] 方法进行调试代码
+e[_variable].apply(e, dataValue);
+```
+

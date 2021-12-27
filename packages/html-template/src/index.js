@@ -95,20 +95,20 @@
       return fn.apply(e, dataValue);
     } catch (error) {
       // 错误代码调试
-      var b = "elfinTpl" + Date.now()
-        , E = "var " + b + "=" + fn.toString()
-        , S = document.getElementsByTagName("head")[0]
-        , x = document.createElement("script")
-        , ua = navigator.userAgent.toLowerCase();
-      if (ua.indexOf("gecko") > -1 && ua.indexOf("khtml") == -1) {
-        e.eval.call(e, E),
-          e[b].apply(e, dataValue);
+      var _variable = "elfinTpl" + Date.now()
+        , _varString = "var " + _variable + "=" + fn.toString()
+        , _head = document.getElementsByTagName("head")[0]
+        , _script = document.createElement("script")
+        , _ua = navigator.userAgent.toLowerCase();
+      if (_ua.indexOf("gecko") > -1 && _ua.indexOf("khtml") == -1) {
+        e.eval.call(e, _varString),
+          e[_variable].apply(e, dataValue);
         return;
       }
-      x.innerHTML = E,
-        S.appendChild(x),
-        S.removeChild(x),
-        e[b].apply(e, dataValue);
+      _script.innerHTML = _varString,
+        _head.appendChild(_script),
+        _head.removeChild(_script),
+        e[_variable].apply(e, dataValue);
     }
   }
 
