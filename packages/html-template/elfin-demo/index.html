@@ -12,27 +12,54 @@
   </head>
   <body>
     <div>请在控制台查看运行时间</div>
+    <img src="./bar-y-category.png" width="574px" height="400px" />
     <script id="test_tpl" type="text/html">
       <ul>
         <% for (i = 0, l = list.length; i < l; i++) { %>
-          <li>姓名：<%= list[i].name %> 年龄：<%= list[i].age %></li>
+          <li>编号：<%= list[i].index %> 姓名：<%= list[i].name %> 年龄：<%= list[i].age %></li>
         <% } %>
       </ul>
     </script>
-    <script src="../src/index.js"></script>
+    <script src="../src/index.min.js"></script>
     <script src="https://imgcache.qq.com/bossweb/service/js/template/txtpl_v1.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ejs@3.1.6/ejs.min.js"></script>
     <script>
       let text = document.querySelector('#test_tpl').innerHTML;
-      console.time('10000数据1次渲染');
+      let list = [{ index: 0, name: 'bobo', age: 30 }];
+
+      console.time('txTpl: 10000数据1次渲染');
       for (let i = 0, l = 10000; i < l; i++) {
-        elfinTpl(text, { list: [{index : i, name: 'bobo', age : 30 }] });
+        txTpl(text, { list: [{ index: i, name: 'bobo', age: 30 }] });
       }
-      console.timeEnd('10000数据1次渲染');
-      console.time('1数据10000次渲染');
+      console.timeEnd('txTpl: 10000数据1次渲染');
+      console.time('txTpl: 1数据10000次渲染');
       for (let i = 0, l = 10000; i < l; i++) {
-        elfinTpl(text, { list: [{index : i, name: 'bobo', age : 30 }] });
+        txTpl(text, { list });
       }
-      console.timeEnd('1数据10000次渲染');
+      console.timeEnd('txTpl: 1数据10000次渲染');
+
+      console.time('ejs: 10000数据1次渲染');
+      for (let i = 0, l = 10000; i < l; i++) {
+        ejs.render(text, { list: [{ index: i, name: 'bobo', age: 30 }] }, { cache: true, filename: 'text' });
+      }
+      console.timeEnd('ejs: 10000数据1次渲染');
+      console.time('ejs: 1数据10000次渲染');
+      for (let i = 0, l = 10000; i < l; i++) {
+        ejs.render(text, { list }, { cache: true, filename: 'text' });
+      }
+      console.timeEnd('ejs: 1数据10000次渲染');
+
+
+      console.time('elfinTpl: 10000数据1次渲染');
+      for (let i = 0, l = 10000; i < l; i++) {
+        elfinTpl(text, { list: [{ index: i, name: 'bobo', age: 30 }] });
+      }
+      console.timeEnd('elfinTpl: 10000数据1次渲染');
+      console.time('elfinTpl: 1数据10000次渲染');
+      for (let i = 0, l = 10000; i < l; i++) {
+        elfinTpl(text, { list });
+      }
+      console.timeEnd('elfinTpl: 1数据10000次渲染');
     </script>
   </body>
 </html>
