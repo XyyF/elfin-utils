@@ -15,6 +15,7 @@
 - 小体量，仅`1.24KB`大小；
 - 支持数据交互（对象、数组、字符串...）（推荐将数据摊平降低复杂度；
 - 支持基本语法: if、for操作；
+- 支持事件绑定: onclick、onmouseover...；
 - 缓存模板解析结果（相同模板再次操作效率更好，默认缓存；
 - 高效率，一次遍历完成输出；
 - 可调试（代码报错可在控制台中调试）；
@@ -26,7 +27,6 @@
 
 1.3 缺陷：
 - 仅支持固定的模板格式，不支持自定义；
-- 功能较单一；
 
 1.4 性能测试：
 
@@ -43,7 +43,7 @@
   <%# comment %>
   <% if (list.length > 0) { %>
     <% for (i = 0, l = list.length; i < l; i++) { %>
-      <div class="img_item <%= list[i] %>">
+      <div class="img_item <%= list[i] %>" onclick="hanldClick()">
         <%= list[i] %>
       </div>
     <% } %>
@@ -58,6 +58,8 @@
     document.querySelector('#colorRange_tpl').innerHTML,
     { list },
   );
+
+  function hanldClick() {};
 </script>
 ```
 
