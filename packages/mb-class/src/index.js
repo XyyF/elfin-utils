@@ -4,7 +4,7 @@
  */
 
 function mbClass(methods) {
-  if (methods === undefined || methods === null) return function() {};
+  if (methods === undefined || methods === null) return function () { };
   return createClass(methods);
 }
 
@@ -31,29 +31,26 @@ function createClass(methods) {
     Ctor = function () { };
     methodProperties.constructor = { value: Ctor, writable: true, configurable: true };
   }
-  // 原型链
-  Ctor.prototype = Object.create(Object.prototype);
   // 原型链属性值(包括constructor)
+  if (!Ctor.prototype) Ctor.prototype = Object.create(Object.prototype);
   Object.defineProperties(Ctor.prototype, methodProperties);
 
   return Ctor;
 }
 
 var res = {
-  // constructor: null,
+  constructor: function(name) {
+    console.log(1111)
+    this._name = name
+  },
   _name: '',
   setName(name) {
     this._name = name;
   },
-  speak: function () {
+  speak() {
     console.log(this._name + ' says...')
   }
 }
-Object.defineProperty(res, 'constructor', {
-  get() {
-    return 123;
-  }
-})
 var Pet = mbClass(res)
 var pet = new Pet('Garfield')
 pet.setName('123');
