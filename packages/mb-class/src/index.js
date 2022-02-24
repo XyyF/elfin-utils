@@ -10,9 +10,11 @@ function mbClass(methods) {
 
 /**
  * 创建class
- * @param {object} methods 方法集合
+ * @param {object} methods 作为prototype原型链属性
+ * @param {object?} _prototype 需要继承的原型链属性，原型链遮蔽原则
+ * @param {function?} _constructor 需要继承的原型
  */
-function createClass(methods, _constructor, _prototype) {
+function createClass(methods, _prototype, _constructor) {
   // 属性描述符集合
   let methodProperties = {};
   let names = Object.getOwnPropertyNames(methods);
@@ -33,8 +35,10 @@ function createClass(methods, _constructor, _prototype) {
   }
   // 原型链属性值(包括constructor)
   if (_prototype) Ctor.prototype = Object.create(_prototype);
-  if (!Ctor.prototype) Ctor.prototype = Object.create(Object.prototype);
+  // if (!Ctor.prototype) Ctor.prototype = Object.create(Object.prototype);
   Object.defineProperties(Ctor.prototype, methodProperties);
+  // 继承原型 __proto__
+  // if (_constructor) Ctor.prototype.constructor = _constructor;
 
   return Ctor;
 }
@@ -56,7 +60,7 @@ mbClass.extend = function(superClass) {
   }
 
   return function(methods) {
-    return createClass(methods, _constructor, _prototype);
+    return createClass(methods, _prototype, _constructor);
   }
 }
 
