@@ -55,7 +55,7 @@
   let list = ['demo'];
 
   document.querySelector('#demo').innerHTML = elfinTpl(
-    document.querySelector('#colorRange_tpl').innerHTML,
+    document.querySelector('#demo_tpl').innerHTML,
     { list },
   );
 
