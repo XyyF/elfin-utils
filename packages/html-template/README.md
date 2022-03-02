@@ -43,7 +43,7 @@
   <%# comment %>
   <% if (list.length > 0) { %>
     <% for (i = 0, l = list.length; i < l; i++) { %>
-      <div class="img_item <%= list[i] %>" onclick="hanldClick()">
+      <div class="img_item <%= list[i] %>" onclick="hanldClick('<%= list[i] %>')">
         <%= list[i] %>
       </div>
     <% } %>
