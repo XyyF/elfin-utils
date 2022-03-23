@@ -43,7 +43,7 @@
   <%# comment %>
   <% if (list.length > 0) { %>
     <% for (i = 0, l = list.length; i < l; i++) { %>
-      <div class="img_item <%= list[i] %>" onclick="hanldClick('<%= list[i] %>')">
+      <div class="img_item <%= list[i] %>" open="<%= open %>" onclick="hanldClick('<%= list[i] %>')">
         <%= list[i] %>
       </div>
     <% } %>
@@ -56,7 +56,7 @@
 
   document.querySelector('#demo').innerHTML = elfinTpl(
     document.querySelector('#demo_tpl').innerHTML,
-    { list },
+    { list, open: false },
   );
 
   function hanldClick() {};
@@ -120,4 +120,3 @@ _head.removeChild(_script);
 // 运行 window[_variable] 方法进行调试代码
 e[_variable].apply(e, dataValue);
 ```
-
