@@ -1,13 +1,23 @@
-import {Class} from '../src/index.js'
-
-var Pet = Class({
-	constructor: function(name) {
-		this._name = name
-	},
-	speak: function() {
-		console.log(this._name + ' says...')
+assert = require('assert');
+assert.egal = function(actual, expect, message) {
+	message = (message ? message + ': ' : '') +
+		'expect ' + expect + ' but actual ' + actual;
+	if (actual === expect) {
+		assert.ok(actual !== 0 || 1 / actual === 1 / expect, message);
+	} else {
+		assert.ok(actual !== actual && expect !== expect, message);
 	}
-})
+};
+assert.isFunction = function(f, message) {
+	message = (message ? message + ': ' : '') +
+		typeof f + ' is not a function';
+	assert.ok(typeof f === 'function', message);
+};
+assert.instanceOf = function(x, y, message) {
+	message = (message ? message + ': ' : '') +
+		{}.toString.call(x) + ' is not a instance of ' + y;
+	assert.ok(x instanceof y, message);
+};
 
-var pet = new Pet('Garfield')
-pet.speak()
+/* global Class:true */
+Class = require('../src/index.js');

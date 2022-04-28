@@ -64,34 +64,4 @@ mbClass.extend = function(superClass) {
   }
 }
 
-
-
-
-var res = {
-  constructor: function(name) {
-    console.log(1111)
-    this._name = name
-  },
-  _name: '',
-  setName(name) {
-    this._name = name;
-  },
-  speak() {
-    console.log(this._name + ' says...')
-  }
-}
-var Pet = mbClass(res)
-var pet = new Pet('Garfield')
-pet.setName('123');
-pet.speak();
-var cat = mbClass.extend(Pet)({
-  // constructor(_super, name) {
-  //   _super(name);
-  // },
-  speak() {
-    console.log(this._name + ' says2...')
-  },
-});
-var pet = new Pet('Garfield2')
-pet.setName('123');
-pet.speak();
+module.exports = mbClass;
