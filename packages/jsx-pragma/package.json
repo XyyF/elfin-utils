@@ -1,0 +1,19 @@
+{
+  "name": "@elfiner/jsx-pragma",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/XyyF/elfin-utils.git"
+  },
+  "author": "rengar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/XyyF/elfin-utils/issues"
+  },
+  "homepage": "https://github.com/XyyF/elfin-utils#readme"
+}
