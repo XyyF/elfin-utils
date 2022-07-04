@@ -1,4 +1,4 @@
-export default function makeDOM(type, props, children) {
+module.exports = function makeDOM(type, props, children) {
   if (arguments.length > 3) {
     children = [children];
 
