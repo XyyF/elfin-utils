@@ -36,6 +36,8 @@ function appendChildren(dom, children) {
           dom.appendChild(child);
         }
       }
+    } else {
+      dom.appendChild(children);
     }
   }
 }
